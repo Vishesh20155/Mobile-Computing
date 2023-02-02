@@ -39,6 +39,16 @@ class EventsActivity : AppCompatActivity() {
         checkBox4.setOnClickListener { showHide(rating4) }
 
         checkBox5.setOnClickListener { showHide(rating5) }
+
+        val clearButton:Button = findViewById(R.id.clear_button)
+        clearButton.setOnClickListener {
+            Toast.makeText(applicationContext, "Clicked Clear", Toast.LENGTH_SHORT).show()
+            clearUtil(checkbox1, rating1)
+            clearUtil(checkbox2, rating2)
+            clearUtil(checkBox3, rating3)
+            clearUtil(checkBox4, rating4)
+            clearUtil(checkBox5, rating5)
+        }
     }
 
     private fun showHide(view:View) {
@@ -47,6 +57,12 @@ class EventsActivity : AppCompatActivity() {
         } else{
             View.VISIBLE
         }
+    }
+
+    private fun clearUtil(checkbox:CheckBox, ratingBar: RatingBar){
+        ratingBar.rating = 0F
+        ratingBar.visibility = RatingBar.INVISIBLE
+        checkbox.isChecked = false
     }
 
     fun submitButtonFunction(view: View) {
