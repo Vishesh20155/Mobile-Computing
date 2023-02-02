@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Odyssey Survey App</string>
+    <!--    For first fragment      -->
+    <string name="name_text">Name: </string>
+    <string name="role_text">Role: </string>
+    <string name="name_hint">Enter your Name</string>
+    <string name="role_select">Select Role</string>
+    <string name="next_button_text">Next</string>
+    <string-array name="role_options">
+        <item>Audience</item>
+        <item>Participant</item>
+    </string-array>
+
+    <!--    For second fragment     -->
+    <string name="events_string">Odyssey Events</string>
+    <string name="music_text">Music</string>
+    <string name="dance_text">Dance</string>
+    <string name="play_text">Play</string>
+    <string name="fashion_text">Fashion</string>
+    <string name="food_text">Food</string>
+    <string name="submit_text">Submit</string>
+    <string name="clear_text">Clear</string>
+</resources>
