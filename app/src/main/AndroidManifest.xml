@@ -17,7 +17,7 @@
         <activity
             android:name=".EventsActivity"
             android:exported="false"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

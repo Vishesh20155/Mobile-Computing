@@ -14,6 +14,8 @@ class EventsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_events)
 
+        Toast.makeText(this, "Entered onCreate for Events", Toast.LENGTH_SHORT).show()
+
         val checkbox1:CheckBox = findViewById(R.id.music_checkBox)
         val rating1:RatingBar = findViewById(R.id.music_ratingBar)
 
