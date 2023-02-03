@@ -1,5 +1,6 @@
 package com.example.odysseysurveyapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -49,6 +50,28 @@ class EventsActivity : AppCompatActivity() {
             clearUtil(checkBox4, rating4)
             clearUtil(checkBox5, rating5)
         }
+
+        val submitButton:Button = findViewById(R.id.submit_button)
+        submitButton.setOnClickListener {
+            Toast.makeText(applicationContext, "Clicked Submit", Toast.LENGTH_SHORT).show()
+            val events = ArrayList<String>()
+            val ratings = ArrayList<Int>()
+
+            prepareArrayList(checkbox1, rating1, events, ratings)
+            prepareArrayList(checkbox2, rating2, events, ratings)
+            prepareArrayList(checkBox3, rating3, events, ratings)
+            prepareArrayList(checkBox4, rating4, events, ratings)
+            prepareArrayList(checkBox5, rating5, events, ratings)
+
+            val bundle:Bundle = Bundle()
+
+            bundle.putStringArrayList("Events", events)
+            bundle.putIntegerArrayList("Ratings", ratings)
+
+            val intent = Intent(this, InfoActivity::class.java)
+            intent.putExtras(bundle)
+            startActivity(intent)
+        }
     }
 
     private fun showHide(view:View) {
@@ -65,8 +88,11 @@ class EventsActivity : AppCompatActivity() {
         checkbox.isChecked = false
     }
 
-    fun submitButtonFunction(view: View) {
-        Toast.makeText(applicationContext,"this is toast message",Toast.LENGTH_SHORT).show()
+    private fun prepareArrayList(checkbox: CheckBox, ratingBar: RatingBar, events:ArrayList<String>, ratings:java.util.ArrayList<Int>){
+        if(checkbox.isChecked){
+            events.add(checkbox.text.toString())
+            ratings.add(ratingBar.numStars)
+        }
     }
 
 }

@@ -135,7 +135,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:text="@string/submit_text"
-            android:onClick="submitButtonFunction"
             style="?android:attr/button" />
 
         <Button
