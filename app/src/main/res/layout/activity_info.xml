@@ -10,7 +10,17 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:text="Hello" />
+        android:layout_margin="20dp"
+        android:text="@string/ratingSummary_text"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rating_textView"
+        android:text="@string/noRatings_text"
+        android:textSize="20sp"
+        android:layout_margin="20dp" />
 
 </LinearLayout>

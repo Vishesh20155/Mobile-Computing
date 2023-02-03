@@ -30,16 +30,16 @@ class EventsActivity : AppCompatActivity() {
         val rating5:RatingBar = findViewById(R.id.food_ratingBar)
 
         checkbox1.setOnClickListener {
-            showHide(rating1)
+            showHideRating(rating1, checkbox1)
         }
 
-        checkbox2.setOnClickListener { showHide(rating2) }
+        checkbox2.setOnClickListener { showHideRating(rating2, checkbox2) }
 
-        checkBox3.setOnClickListener { showHide(rating3) }
+        checkBox3.setOnClickListener { showHideRating(rating3, checkBox3) }
 
-        checkBox4.setOnClickListener { showHide(rating4) }
+        checkBox4.setOnClickListener { showHideRating(rating4, checkBox4) }
 
-        checkBox5.setOnClickListener { showHide(rating5) }
+        checkBox5.setOnClickListener { showHideRating(rating5, checkBox5) }
 
         val clearButton:Button = findViewById(R.id.clear_button)
         clearButton.setOnClickListener {
@@ -74,11 +74,11 @@ class EventsActivity : AppCompatActivity() {
         }
     }
 
-    private fun showHide(view:View) {
-        view.visibility = if (view.visibility == View.VISIBLE){
-            View.INVISIBLE
-        } else{
+    private fun showHideRating(ratingBar: RatingBar, checkbox: CheckBox) {
+        ratingBar.visibility = if (checkbox.isChecked){
             View.VISIBLE
+        } else{
+            View.INVISIBLE
         }
     }
 
@@ -91,7 +91,7 @@ class EventsActivity : AppCompatActivity() {
     private fun prepareArrayList(checkbox: CheckBox, ratingBar: RatingBar, events:ArrayList<String>, ratings:java.util.ArrayList<Int>){
         if(checkbox.isChecked){
             events.add(checkbox.text.toString())
-            ratings.add(ratingBar.numStars)
+            ratings.add(ratingBar.rating.toInt())
         }
     }
 

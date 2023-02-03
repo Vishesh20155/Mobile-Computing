@@ -13,16 +13,27 @@ class InfoActivity : AppCompatActivity() {
         if (bundle != null){
             val events: ArrayList<String> = bundle.getStringArrayList("Events") as ArrayList<String>
             val ratings: ArrayList<Int> = bundle.getIntegerArrayList("Ratings") as ArrayList<Int>
-            var tv: TextView = findViewById(R.id.textView)
+            var tv: TextView = findViewById(R.id.rating_textView)
 //            tv.text = bundle.getStringArrayList("Events")?.get(0) ?: "Hello"
 
-            var forTextView: String = ""
-            for (s in events){
-                forTextView+=s
-                forTextView+="\n"
-            }
+            if (events.size > 0) {
+                var forTextView: String = ""
+                for ((iterator, s) in events.withIndex()) {
+                    forTextView += s
+                    forTextView += " is "
+                    forTextView += if (ratings[iterator] == 0) {
+                        "unrated"
+                    } else {
+                        "rated ${ratings[iterator]}/5."
+                    }
 
-            tv.text = forTextView
+                    forTextView += "\n"
+
+                }
+
+
+                tv.text = forTextView
+            }
         }
     }
 }
