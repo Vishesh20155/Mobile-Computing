@@ -10,26 +10,41 @@ import android.widget.RatingBar
 import android.widget.Toast
 
 class EventsActivity : AppCompatActivity() {
+
+    private lateinit var checkbox1:CheckBox
+    private lateinit var rating1:RatingBar
+
+    lateinit var checkbox2:CheckBox
+    private lateinit var rating2:RatingBar
+
+    private lateinit var checkBox3:CheckBox
+    private lateinit var rating3:RatingBar
+
+    private lateinit var checkBox4:CheckBox
+    private lateinit var rating4:RatingBar
+
+    private lateinit var checkBox5:CheckBox
+    private lateinit var rating5:RatingBar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_events)
 
         Toast.makeText(this, "Entered onCreate for Events", Toast.LENGTH_SHORT).show()
 
-        val checkbox1:CheckBox = findViewById(R.id.music_checkBox)
-        val rating1:RatingBar = findViewById(R.id.music_ratingBar)
+        checkbox1 = findViewById(R.id.music_checkBox)
+        rating1 = findViewById(R.id.music_ratingBar)
 
-        val checkbox2:CheckBox = findViewById(R.id.dance_checkBox)
-        val rating2:RatingBar = findViewById(R.id.dance_ratingBar)
+        checkbox2 = findViewById(R.id.dance_checkBox)
+        rating2 = findViewById(R.id.dance_ratingBar)
 
-        val checkBox3:CheckBox = findViewById(R.id.play_checkBox)
-        val rating3:RatingBar = findViewById(R.id.play_ratingBar)
+        checkBox3 = findViewById(R.id.play_checkBox)
+        rating3 = findViewById(R.id.play_ratingBar)
 
-        val checkBox4:CheckBox = findViewById(R.id.fashion_checkBox)
-        val rating4:RatingBar = findViewById(R.id.fashion_ratingBar)
+        checkBox4 = findViewById(R.id.fashion_checkBox)
+        rating4 = findViewById(R.id.fashion_ratingBar)
 
-        val checkBox5:CheckBox = findViewById(R.id.food_checkBox)
-        val rating5:RatingBar = findViewById(R.id.food_ratingBar)
+        checkBox5 = findViewById(R.id.food_checkBox)
+        rating5 = findViewById(R.id.food_ratingBar)
 
         checkbox1.setOnClickListener {
             showHideRating(rating1, checkbox1)
@@ -75,6 +90,15 @@ class EventsActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//        outState.putFloat("val", rating1.rating)
+//        outState.putFloat("val", rating2.rating)
+//        outState.putFloat("val", rating3.rating)
+//        outState.putFloat("val", rating4.rating)
+//        outState.putFloat("val", rating5.rating)
+//    }
 
     private fun showHideRating(ratingBar: RatingBar, checkbox: CheckBox) {
         ratingBar.visibility = if (checkbox.isChecked){
