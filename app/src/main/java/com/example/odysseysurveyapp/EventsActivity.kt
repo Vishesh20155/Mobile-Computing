@@ -3,6 +3,7 @@ package com.example.odysseysurveyapp
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
@@ -45,6 +46,21 @@ class EventsActivity : AppCompatActivity() {
 
         checkBox5 = findViewById(R.id.food_checkBox)
         rating5 = findViewById(R.id.food_ratingBar)
+
+        if (savedInstanceState!=null){
+            Toast.makeText(this, "Restoring", Toast.LENGTH_SHORT).show()
+            val check1 = savedInstanceState.getBoolean("check1")
+            val check2 = savedInstanceState.getBoolean("check2")
+            val check3 = savedInstanceState.getBoolean("check3")
+            val check4 = savedInstanceState.getBoolean("check4")
+            val check5 = savedInstanceState.getBoolean("check5")
+
+            if(check1){ rating1.visibility=View.VISIBLE }
+            if(check2){ rating2.visibility=View.VISIBLE }
+            if(check3){ rating3.visibility=View.VISIBLE }
+            if(check4){ rating4.visibility=View.VISIBLE }
+            if(check5){ rating5.visibility=View.VISIBLE }
+        }
 
         checkbox1.setOnClickListener {
             showHideRating(rating1, checkbox1)
@@ -91,14 +107,15 @@ class EventsActivity : AppCompatActivity() {
         }
     }
 
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//        outState.putFloat("val", rating1.rating)
-//        outState.putFloat("val", rating2.rating)
-//        outState.putFloat("val", rating3.rating)
-//        outState.putFloat("val", rating4.rating)
-//        outState.putFloat("val", rating5.rating)
-//    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("check1", checkbox1.isChecked)
+        outState.putBoolean("check2", checkbox2.isChecked)
+        outState.putBoolean("check3", checkBox3.isChecked)
+        outState.putBoolean("check4", checkBox4.isChecked)
+        outState.putBoolean("check5", checkBox5.isChecked)
+        Toast.makeText(this, "Saving Instance", Toast.LENGTH_SHORT).show()
+    }
 
     private fun showHideRating(ratingBar: RatingBar, checkbox: CheckBox) {
         ratingBar.visibility = if (checkbox.isChecked){
