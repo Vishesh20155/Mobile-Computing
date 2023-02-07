@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
@@ -30,7 +31,8 @@ class EventsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_events)
 
-        Toast.makeText(this, "Entered onCreate for Events", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onCreate", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onCreate")
 
         checkbox1 = findViewById(R.id.music_checkBox)
         rating1 = findViewById(R.id.music_ratingBar)
@@ -48,7 +50,7 @@ class EventsActivity : AppCompatActivity() {
         rating5 = findViewById(R.id.food_ratingBar)
 
         if (savedInstanceState!=null){
-            Toast.makeText(this, "Restoring", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, "Restoring", Toast.LENGTH_SHORT).show()
             val check1 = savedInstanceState.getBoolean("check1")
             val check2 = savedInstanceState.getBoolean("check2")
             val check3 = savedInstanceState.getBoolean("check3")
@@ -76,7 +78,7 @@ class EventsActivity : AppCompatActivity() {
 
         val clearButton:Button = findViewById(R.id.clear_button)
         clearButton.setOnClickListener {
-            Toast.makeText(applicationContext, "Clicked Clear", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(applicationContext, "Clicked Clear", Toast.LENGTH_SHORT).show()
             clearUtil(checkbox1, rating1)
             clearUtil(checkbox2, rating2)
             clearUtil(checkBox3, rating3)
@@ -86,7 +88,7 @@ class EventsActivity : AppCompatActivity() {
 
         val submitButton:Button = findViewById(R.id.submit_button)
         submitButton.setOnClickListener {
-            Toast.makeText(applicationContext, "Clicked Submit", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(applicationContext, "Clicked Submit", Toast.LENGTH_SHORT).show()
             val events = ArrayList<String>()
             val ratings = ArrayList<Int>()
 
@@ -114,7 +116,7 @@ class EventsActivity : AppCompatActivity() {
         outState.putBoolean("check3", checkBox3.isChecked)
         outState.putBoolean("check4", checkBox4.isChecked)
         outState.putBoolean("check5", checkBox5.isChecked)
-        Toast.makeText(this, "Saving Instance", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "Saving Instance", Toast.LENGTH_SHORT).show()
     }
 
     private fun showHideRating(ratingBar: RatingBar, checkbox: CheckBox) {
@@ -136,6 +138,43 @@ class EventsActivity : AppCompatActivity() {
             events.add(checkbox.text.toString())
             ratings.add(ratingBar.rating.toInt())
         }
+    }
+
+    override fun onStart() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onStart", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onStart")
+        super.onStart()
+    }
+
+    override fun onResume() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onResume", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onResume")
+        super.onResume()
+    }
+
+    override fun onPause() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onPause", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onPause")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onStop", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onStop")
+        super.onStop()
+    }
+
+    override fun onRestart() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onRestart", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onRestart")
+        super.onRestart()
+    }
+
+    override fun onDestroy() {
+        println("Here In Events")
+        Toast.makeText(this, "State of activity: $localClassName is now onDestroy", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onDestroy")
+        super.onDestroy()
     }
 
 }

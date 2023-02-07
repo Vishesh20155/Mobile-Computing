@@ -2,7 +2,9 @@ package com.example.odysseysurveyapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
+import android.widget.Toast
 
 class InfoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,5 +37,39 @@ class InfoActivity : AppCompatActivity() {
                 tv.text = forTextView
             }
         }
+    }
+
+    override fun onStart() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onStart", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onStart")
+        super.onStart()
+    }
+
+    override fun onResume() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onResume", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onResume")
+        super.onResume()
+    }
+    override fun onPause() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onPause", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onPause")
+        super.onPause()
+    }
+    override fun onStop() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onStop", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onStop")
+        super.onStop()
+    }
+
+    override fun onRestart() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onRestart", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onRestart")
+        super.onRestart()
+    }
+
+    override fun onDestroy() {
+        Toast.makeText(applicationContext, "State of activity: ${this.localClassName} is now onDestroy", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onDestroy")
+        super.onDestroy()
     }
 }

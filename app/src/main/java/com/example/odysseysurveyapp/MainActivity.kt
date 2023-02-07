@@ -3,6 +3,7 @@ package com.example.odysseysurveyapp
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -14,6 +15,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onCreate", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onCreate")
         // Code to add drop down
 //        val roleOptions = resources.getStringArray(R.array.role_options)
 //        val arrayAdapter = ArrayAdapter(this, R.layout.dropdown_item, roleOptions)
@@ -29,8 +32,46 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun nextButtonFunction(view: View) {
-        Toast.makeText(applicationContext,"this is toast message", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(applicationContext,"this is toast message", Toast.LENGTH_SHORT).show()
         val intent = Intent(this, EventsActivity::class.java)
         startActivity(intent)
     }
+
+    override fun onStart() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onStart", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onStart")
+        super.onStart()
+    }
+
+    override fun onResume() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onResume", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onResume")
+        super.onResume()
+    }
+
+    override fun onPause() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onPause", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onPause")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onStop", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onStop")
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        println("Here In main")
+        Toast.makeText(applicationContext, "State of activity: ${this.localClassName} is now onDestroy", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onDestroy")
+        super.onDestroy()
+    }
+
+    override fun onRestart() {
+        Toast.makeText(this, "State of activity: ${this.localClassName} is now onRestart", Toast.LENGTH_SHORT).show()
+        Log.i("Tagger", "State of activity: ${this.localClassName} is now onRestart")
+        super.onRestart()
+    }
+
 }
