@@ -13,6 +13,15 @@ class InfoActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         if (bundle != null){
+
+            val name: String? = bundle.getString("Name")
+            val role: String? = bundle.getString("Role")
+
+            var userTextView: String = "--$name ($role)"
+            var userTV:TextView = findViewById(R.id.ratingsBy_textView)
+            userTV.text = userTextView
+
+
             val events: ArrayList<String> = bundle.getStringArrayList("Events") as ArrayList<String>
             val ratings: ArrayList<Int> = bundle.getIntegerArrayList("Ratings") as ArrayList<Int>
             var tv: TextView = findViewById(R.id.rating_textView)

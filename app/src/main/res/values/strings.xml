@@ -23,6 +23,7 @@
 
     <!--    For third fragment      -->
     <string name="ratingSummary_text">Events\' Rating Summary:</string>
+    <string name="ratingsBy_text">--Anonymous(Role)</string>
     <string name="noRatings_text">You did not select any Activity</string>
 
 </resources>

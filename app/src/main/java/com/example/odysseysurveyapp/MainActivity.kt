@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 
@@ -33,8 +34,19 @@ class MainActivity : AppCompatActivity() {
 
     fun nextButtonFunction(view: View) {
 //        Toast.makeText(applicationContext,"this is toast message", Toast.LENGTH_SHORT).show()
-        val intent = Intent(this, EventsActivity::class.java)
-        startActivity(intent)
+        val nameText:EditText = findViewById(R.id.name_editText)
+        val spinner:Spinner = findViewById(R.id.role_spinner)
+        if (nameText.text.toString().isEmpty()){
+            Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            val intent = Intent(this, EventsActivity::class.java)
+            val bundleOutput = Bundle()
+            bundleOutput.putString("Name", nameText.text.toString())
+            bundleOutput.putString("Role", spinner.selectedItem.toString())
+            intent.putExtras(bundleOutput)
+            startActivity(intent)
+        }
     }
 
     override fun onStart() {

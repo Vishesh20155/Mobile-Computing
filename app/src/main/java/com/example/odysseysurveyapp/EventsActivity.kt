@@ -98,7 +98,13 @@ class EventsActivity : AppCompatActivity() {
             prepareArrayList(checkBox4, rating4, events, ratings)
             prepareArrayList(checkBox5, rating5, events, ratings)
 
+            val bundleIncoming = intent.extras
             val bundle:Bundle = Bundle()
+
+            if(bundleIncoming!=null){
+                bundle.putString("Name", bundleIncoming.getString("Name"))
+                bundle.putString("Role", bundleIncoming.getString("Role"))
+            }
 
             bundle.putStringArrayList("Events", events)
             bundle.putIntegerArrayList("Ratings", ratings)
