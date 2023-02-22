@@ -7,10 +7,6 @@
     tools:context=".AlarmsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment" />
 
     <TimePicker
         android:id="@+id/timePicker_Alarm"
@@ -38,5 +34,11 @@
             android:layout_margin="20dp"
             android:text="@string/stop" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_blank_fragment" />
 
 </LinearLayout>
