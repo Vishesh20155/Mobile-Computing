@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -27,6 +28,8 @@ class AlarmsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    var curr = 0
+    private lateinit var contentTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,13 +50,20 @@ class AlarmsFragment : Fragment() {
         val timePicker: TimePicker = v.findViewById(R.id.timePicker_Alarm)
         timePicker.setIs24HourView(true)
 
+        contentTextView = v.findViewById(R.id.content)
+
         val startButton: Button = v.findViewById(R.id.btn_Start)
         startButton.setOnClickListener {
-            print("Here")
-            println(LocalDateTime.now().hour)
+
 //            Toast.makeText(this, LocalDateTime.now().hour.(), Toast.LENGTH_SHORT).show()
             val hour = timePicker.hour
             val min = timePicker.minute
+
+            if (curr<5){
+                var contentText = contentTextView.text
+                contentTextView.text = contentText.toString() + "\nAlarm Time: " + hour.toString() + ":" + min.toString()
+                curr += 1
+            }
 
             val intent = Intent(context, AlarmService::class.java)
             intent.putExtra("Hour", hour)
@@ -63,11 +73,23 @@ class AlarmsFragment : Fragment() {
 
         val stopButton: Button = v.findViewById(R.id.btn_Stop)
         stopButton.setOnClickListener {
+            curr = 0
+            var contentText = contentTextView.text
+            contentText = ""
+            contentTextView.text = contentText
             val intent = Intent(context, AlarmService::class.java)
             context?.stopService(intent)
         }
 
         return v
+    }
+
+    fun setText(){
+        var contentText = contentTextView.text
+        contentText = ""
+        contentTextView.text = contentText
+
+        curr = 0
     }
 
     companion object {
