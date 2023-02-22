@@ -1,10 +1,17 @@
 package com.example.alarmapp
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TimePicker
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import java.time.LocalDateTime
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,12 +36,38 @@ class AlarmsFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_alarms, container, false)
+        val v = inflater.inflate(R.layout.fragment_alarms, container, false)
+
+        val timePicker: TimePicker = v.findViewById(R.id.timePicker_Alarm)
+        timePicker.setIs24HourView(true)
+
+        val startButton: Button = v.findViewById(R.id.btn_Start)
+        startButton.setOnClickListener {
+            print("Here")
+            println(LocalDateTime.now().hour)
+//            Toast.makeText(this, LocalDateTime.now().hour.(), Toast.LENGTH_SHORT).show()
+            val hour = timePicker.hour
+            val min = timePicker.minute
+
+            val intent = Intent(context, AlarmService::class.java)
+            intent.putExtra("Hour", hour)
+            intent.putExtra("Minute", min)
+            context?.startService(intent)
+        }
+
+        val stopButton: Button = v.findViewById(R.id.btn_Stop)
+        stopButton.setOnClickListener {
+            val intent = Intent(context, AlarmService::class.java)
+            context?.stopService(intent)
+        }
+
+        return v
     }
 
     companion object {
@@ -56,4 +89,5 @@ class AlarmsFragment : Fragment() {
                 }
             }
     }
+
 }

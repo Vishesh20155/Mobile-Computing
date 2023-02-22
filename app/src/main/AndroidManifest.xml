@@ -11,6 +11,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AlarmApp"
         tools:targetApi="31">
+        <service
+            android:name=".AlarmService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
