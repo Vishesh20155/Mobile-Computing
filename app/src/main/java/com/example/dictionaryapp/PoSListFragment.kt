@@ -1,11 +1,15 @@
 package com.example.dictionaryapp
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,7 +25,16 @@ class PoSListFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private lateinit var tvWord: TextView
     private var word: String? = null
+    private lateinit var wordDetailsList: MutableList<WordDetails>
+    private lateinit var recyclerView: RecyclerView
+    val posList: MutableList<String> = mutableListOf()
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is ResultsActivity) {
+            wordDetailsList = context.wordDetailsList
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -37,7 +50,25 @@ class PoSListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_pos_list, container, false)
         tvWord = view.findViewById(R.id.tv_word)
         tvWord.text = word?.toUpperCase()
+        recyclerView = view.findViewById(R.id.rv_pos_list)
+        for (w in wordDetailsList) {
+            posList.add(w.partOfSpeech)
+        }
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val adapter = PoSListAdapter(wordDetailsList)
+        println("Number of elements inside fragment: ${wordDetailsList.size}")
+        adapter.setOnBtnClickListener(object : PoSListAdapter.OnBtnClickListener {
+            override fun onBtnClick(item: WordDetails) {
+                Toast.makeText(context, "Clicked ${item.partOfSpeech}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
     companion object {
