@@ -63,6 +63,11 @@ class PoSListFragment : Fragment() {
         println("Number of elements inside fragment: ${wordDetailsList.size}")
         adapter.setOnBtnClickListener(object : PoSListAdapter.OnBtnClickListener {
             override fun onBtnClick(item: WordDetails) {
+                val detailsFragment = DetailsFragment()
+                val bundle = Bundle()
+                bundle.putString("Word", word)
+                detailsFragment.arguments = bundle
+                detailsFragment.show(childFragmentManager, "popup")
                 Toast.makeText(context, "Clicked ${item.partOfSpeech}", Toast.LENGTH_SHORT).show()
             }
         })
