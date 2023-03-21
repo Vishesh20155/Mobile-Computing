@@ -53,6 +53,9 @@ class MainActivity : AppCompatActivity() {
                 if (netInfo != null && netInfo.isConnected) {
                     CallAPI().execute(wordUrl)
                 }
+                else {
+                    Toast.makeText(applicationContext, "Connection Issue", Toast.LENGTH_SHORT).show()
+                }
             }
             else {
                 Toast.makeText(applicationContext, "Invalid Input", Toast.LENGTH_SHORT).show()
