@@ -78,6 +78,9 @@ class MainActivity : AppCompatActivity() {
                 val reader = BufferedReader(InputStreamReader(inpStream))
                 jsonArray = JSONArray(reader.readLine())
             }
+            else{
+                return null
+            }
             println(jsonArray)
             Log.e("JSON Array", jsonArray.toString())
             return jsonArray.toString()
@@ -85,6 +88,10 @@ class MainActivity : AppCompatActivity() {
 
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
+            if (result == null) {
+                Toast.makeText(applicationContext, "Word not found in Dictionary", Toast.LENGTH_SHORT).show()
+                return
+            }
             val jsonArray = JSONArray(result)
             val jsonObj = jsonArray.getJSONObject(0)
             Log.e("JSON Object", jsonObj.toString())
