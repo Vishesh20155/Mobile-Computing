@@ -33,16 +33,38 @@ class MainActivity : AppCompatActivity() {
 
         btnSearch.setOnClickListener {
             val word = etWord.text.toString()
-            val wordUrl = "https://api.dictionaryapi.dev/api/v2/entries/en/" + word
-            val connMngr: ConnectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val netInfo = connMngr.activeNetworkInfo
-            if (netInfo != null && netInfo.isConnected) {
-                CallAPI().execute(wordUrl)
+            if (word.isEmpty()) {
+                Toast.makeText(applicationContext, "Empty word field", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            var validInp = true
+            for (c in word) {
+                if ((c in 'a'..'z') ||  (c in 'A'..'Z')) continue
+                else {
+                    validInp = false
+                }
+            }
+
+            if (validInp) {
+                val wordUrl = "https://api.dictionaryapi.dev/api/v2/entries/en/" + word
+                val connMngr: ConnectivityManager =
+                    getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                val netInfo = connMngr.activeNetworkInfo
+                if (netInfo != null && netInfo.isConnected) {
+                    CallAPI().execute(wordUrl)
+                }
+            }
+            else {
+                Toast.makeText(applicationContext, "Invalid Input", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private inner class CallAPI(): AsyncTask<String, Void, String>() {
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+        }
         override fun doInBackground(vararg p0: String?): String? {
             val url = URL(p0[0])
             val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
