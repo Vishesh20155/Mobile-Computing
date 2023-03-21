@@ -57,9 +57,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Serving Size / Qty of Item"
+        android:text="Definition"
         android:textColor="@color/black"
         android:textSize="18sp"/>
+    <TextView
+        android:id="@+id/tv_details_definition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NA"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Example"
+        android:textColor="@color/black"
+        android:textSize="18sp"/>
+    <TextView
+        android:id="@+id/tv_details_example"
+        android:layout_width="match_parent"
+        android:text="NA"
+        android:layout_height="wrap_content"/>
 
 
     <Button

@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import org.w3c.dom.Text
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,6 +40,8 @@ class DetailsFragment : Fragment() {
     private lateinit var wordDetailsList: MutableList<WordDetails>
     private lateinit var tvSynonyms: TextView
     private lateinit var tvAntonyms: TextView
+    private lateinit var tvDefinition: TextView
+    private lateinit var tvExample: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +73,8 @@ class DetailsFragment : Fragment() {
         btnSpeaker = view.findViewById(R.id.btn_details_speaker)
         tvSynonyms = view.findViewById(R.id.tv_synonyms)
         tvAntonyms = view.findViewById(R.id.tv_antonyms)
+        tvDefinition = view.findViewById(R.id.tv_details_definition)
+        tvExample = view.findViewById(R.id.tv_details_example)
 
         if (wordDetailsList[idx!!].synonyms.size > 0) {
             var txt = ""
@@ -96,6 +101,10 @@ class DetailsFragment : Fragment() {
             if (txt.isNotEmpty())
                 tvAntonyms.text = txt
         }
+
+        if (wordDetailsList[idx!!].definitions[0].example.isNotEmpty())
+            tvExample.text = wordDetailsList[idx!!].definitions[0].example
+        tvDefinition.text = wordDetailsList[idx!!].definitions[0].definition
 
         return view
     }
