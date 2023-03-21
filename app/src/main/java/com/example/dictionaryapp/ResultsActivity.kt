@@ -16,7 +16,7 @@ class ResultsActivity : AppCompatActivity() {
         val result = intent.getStringExtra("APIResult")
         val resultJson = JSONArray(result).getJSONObject(0)
         val tv = findViewById<TextView>(R.id.tv_res)
-        tv.text = resultJson.getString("word")
+//        tv.text = resultJson.getString("word")
 
         // Converting the API data to data class
 //        val meanings: MutableList<WordDetails> = resultJson.get("meanings") as MutableList<WordDetails>
@@ -70,13 +70,21 @@ class ResultsActivity : AppCompatActivity() {
         // Starting the fragment to show the List of words as recycler view:
         val bundle = Bundle()
         bundle.putString("Word", resultJson.getString("word"))
+        var soundURL = ""
+        val phArray = resultJson.getJSONArray("phonetics")
+        for (iter in 0 until phArray.length()) {
+            val obj = phArray.getJSONObject(iter)
+            soundURL = obj.getString("audio")
+            if (soundURL.isNotEmpty()) break
+        }
+        bundle.putString("SoundURL", soundURL)
 
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         val posListFragment = PoSListFragment()
         posListFragment.arguments = bundle
         fragmentTransaction.add(R.id.list_frag_container, posListFragment)
-        fragmentTransaction.addToBackStack(null)
+//        fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
 
     }

@@ -1,0 +1,9 @@
+* Error handling for word not found
+* Validate connection
+* validate response
+* See error handling in slides
+* Error handling in question pdf
+* Examples Text View
+* click button for show details
+* speaker icon in details fragment
+* definition

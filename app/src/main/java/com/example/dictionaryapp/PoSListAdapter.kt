@@ -1,5 +1,8 @@
 package com.example.dictionaryapp
 
+import android.graphics.Color
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +28,12 @@ class PoSListAdapter (private val wordDetailsList: List<WordDetails>):
     inner class ViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(wordDetail: WordDetails, listener: OnBtnClickListener?) {
             tvPoS.text = wordDetail.partOfSpeech
+            tvPoS.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            tvPoS.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER_HORIZONTAL
+            tvPoS.setTextColor(Color.BLACK)
+            tvPoS.setOnClickListener {
+                listener?.onBtnClick(wordDetail)
+            }
             btnShowDetail.setOnClickListener {
                 listener?.onBtnClick(wordDetail)
             }

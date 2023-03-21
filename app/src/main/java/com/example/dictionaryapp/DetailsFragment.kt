@@ -1,12 +1,22 @@
 package com.example.dictionaryapp
 
+import android.content.Context
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.text.Layout.Alignment
+import android.util.TypedValue
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -18,17 +28,31 @@ private const val ARG_PARAM2 = "param2"
  * Use the [DetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class DetailsFragment : DialogFragment() {
+class DetailsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var word: String? = null
+    private var urlSound: String? = null
+    private var idx: Int? = 0
     private lateinit var tvWord: TextView
-    private var param2: String? = null
+    private lateinit var btnClose: Button
+    private lateinit var btnSpeaker: ImageButton
+    private lateinit var wordDetailsList: MutableList<WordDetails>
+    private lateinit var tvSynonyms: TextView
+    private lateinit var tvAntonyms: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             word = it.getString("Word")
-            param2 = it.getString(ARG_PARAM2)
+            idx = it.getInt("Index")
+            urlSound = it.getString("SoundURL")
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is ResultsActivity) {
+            wordDetailsList = context.wordDetailsList
         }
     }
 
@@ -39,8 +63,55 @@ class DetailsFragment : DialogFragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_details, container, false)
         tvWord = view.findViewById(R.id.tv_details_word)
-        tvWord.text = word
+        tvWord.text = word?.toUpperCase()
+        tvWord.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
+        tvWord.gravity = Gravity.CENTER_VERTICAL
+        btnClose = view.findViewById(R.id.btn_close)
+        btnSpeaker = view.findViewById(R.id.btn_details_speaker)
+        tvSynonyms = view.findViewById(R.id.tv_synonyms)
+        tvAntonyms = view.findViewById(R.id.tv_antonyms)
+
+        if (wordDetailsList[idx!!].synonyms.size > 0) {
+            var txt = ""
+            val n = wordDetailsList[idx!!].synonyms.size
+            for (i in 0 until n) {
+                txt += wordDetailsList[idx!!].synonyms[i]
+                if (i != n-1) {
+                    txt = "$txt, "
+                }
+            }
+            if(txt.isNotEmpty())
+                tvSynonyms.text = txt
+        }
+
+        if (wordDetailsList[idx!!].antonyms.size > 0) {
+            var txt = "Antonyms: "
+            val n = wordDetailsList[idx!!].antonyms.size
+            for (i in 0 until n) {
+                txt += wordDetailsList[idx!!].antonyms[i]
+                if (i != n-1) {
+                    txt = "$txt, "
+                }
+            }
+            if (txt.isNotEmpty())
+                tvAntonyms.text = txt
+        }
+
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        btnClose.setOnClickListener {
+            val fragmentManager: FragmentManager? = fragmentManager
+            val fragmentTransaction: FragmentTransaction? = fragmentManager?.beginTransaction()
+            fragmentManager?.popBackStack()
+            fragmentTransaction?.commit()
+        }
+
+        btnSpeaker.setOnClickListener {
+            PlaySound(urlSound, MediaPlayer(), context).execute()
+        }
     }
 
     companion object {
