@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -14,7 +15,8 @@ class PoSListAdapter (private val wordDetailsList: List<WordDetails>):
     RecyclerView.Adapter<PoSListAdapter.ViewHolder>() {
 
     private lateinit var tvPoS: TextView
-    private lateinit var btnShowDetail: Button
+//    private lateinit var btnShowDetail: Button
+    private lateinit var rlItem: RelativeLayout
 
     interface OnBtnClickListener {
         fun onBtnClick(item: WordDetails)
@@ -34,7 +36,10 @@ class PoSListAdapter (private val wordDetailsList: List<WordDetails>):
             tvPoS.setOnClickListener {
                 listener?.onBtnClick(wordDetail)
             }
-            btnShowDetail.setOnClickListener {
+//            btnShowDetail.setOnClickListener {
+//                listener?.onBtnClick(wordDetail)
+//            }
+            rlItem.setOnClickListener {
                 listener?.onBtnClick(wordDetail)
             }
         }
@@ -43,7 +48,8 @@ class PoSListAdapter (private val wordDetailsList: List<WordDetails>):
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.pos_list_item, parent, false)
         tvPoS = view.findViewById(R.id.tv_pos)
-        btnShowDetail = view.findViewById(R.id.btn_show_detail)
+//        btnShowDetail = view.findViewById(R.id.btn_show_detail)
+        rlItem = view.findViewById(R.id.rl_pos_item)
         println("Number of elements inside adapter: ${wordDetailsList.size}")
         return ViewHolder(view)
     }
