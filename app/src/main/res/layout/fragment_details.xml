@@ -25,68 +25,77 @@
             android:layout_marginLeft="10dp"/>
     </LinearLayout>
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Synonyms: "
-        android:textColor="@color/black"
-        android:textSize="18sp"/>
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Synonyms: "
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
 
-    <TextView
-        android:id="@+id/tv_synonyms"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="NA"/>
+            <TextView
+                android:id="@+id/tv_synonyms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="NA"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Antonyms"
-        android:textColor="@color/black"
-        android:textSize="18sp"/>
-    <TextView
-        android:id="@+id/tv_antonyms"
-        android:layout_width="match_parent"
-        android:text="NA"
-        android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Antonyms"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+            <TextView
+                android:id="@+id/tv_antonyms"
+                android:layout_width="match_parent"
+                android:text="NA"
+                android:layout_height="wrap_content"/>
 
-    <TextView
-        android:id="@+id/tv_serving_size"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Definition"
-        android:textColor="@color/black"
-        android:textSize="18sp"/>
-    <TextView
-        android:id="@+id/tv_details_definition"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="NA"/>
+            <TextView
+                android:id="@+id/tv_serving_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Definition"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+            <TextView
+                android:id="@+id/tv_details_definition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="NA"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Example"
-        android:textColor="@color/black"
-        android:textSize="18sp"/>
-    <TextView
-        android:id="@+id/tv_details_example"
-        android:layout_width="match_parent"
-        android:text="NA"
-        android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Example"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+            <TextView
+                android:id="@+id/tv_details_example"
+                android:layout_width="match_parent"
+                android:text="NA"
+                android:layout_height="wrap_content"/>
 
 
-    <Button
-        android:id="@+id/btn_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center_horizontal"
-        android:text="Close"/>
+            <Button
+                android:id="@+id/btn_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:text="Close"/>
+        </LinearLayout>
+    </ScrollView>
 
 
 </LinearLayout>
