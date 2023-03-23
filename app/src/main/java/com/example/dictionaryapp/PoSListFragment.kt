@@ -69,7 +69,8 @@ class PoSListFragment : Fragment() {
         btnSpeaker = view.findViewById(R.id.btn_speaker)
         btnSpeaker.setOnClickListener {
 //            CallForSound(MediaPlayer()).execute()
-            PlaySound(urlSound, MediaPlayer(), context).execute()
+//            PlaySound(urlSound, MediaPlayer(), context).execute()
+            PlaySound(context, urlSound).execute()
         }
         for (w in wordDetailsList) {
             posList.add(w.partOfSpeech)

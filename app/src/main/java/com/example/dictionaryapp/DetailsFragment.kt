@@ -123,7 +123,8 @@ class DetailsFragment : Fragment() {
         }
 
         btnSpeaker.setOnClickListener {
-            PlaySound(urlSound, MediaPlayer(), context).execute()
+//            PlaySound(urlSound, MediaPlayer(), context).execute()
+            PlaySound(context, urlSound).execute()
         }
     }
 

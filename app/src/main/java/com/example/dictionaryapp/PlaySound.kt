@@ -7,53 +7,50 @@ import android.os.AsyncTask
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.core.net.toUri
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
 
-class PlaySound(private val urlSound: String?, private val mediaPlayer: MediaPlayer, private val context: Context?) : AsyncTask<Void, Void, Boolean>() {
-    override fun doInBackground(vararg p0: Void?): Boolean {
-        println("Inside do in BG. URL: $urlSound")
-        if ((urlSound == null) || (urlSound?.length==0)) return false
-        try {
-            val url = URL(urlSound)
-            val connection = url.openConnection()
-            connection.connect()
-            val input = BufferedInputStream(url.openStream(), 8192)
-            val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), "abc.mp3")
-            val output = FileOutputStream(file)
+class PlaySound(private val context: Context?, private val url: String?) :
+    AsyncTask<Unit, Unit, File?>() {
 
-            val data = ByteArray(1024)
-            var count: Int = input.read(data)
-            while (count != -1) {
-                output.write(data, 0, count);
-                count = input.read(data)
+    private lateinit var mediaPlayer: MediaPlayer
+
+    override fun doInBackground(vararg params: Unit?): File? {
+        if ((url == null) || (url.isEmpty())) return null
+        try {
+            val filename = "audio.mp3"
+            val directory = context?.filesDir
+            val file = File(directory, filename)
+            val inputStream = URL(url).openStream()
+            val outputStream = FileOutputStream(file)
+            inputStream.use { input ->
+                outputStream.use { output ->
+                    input.copyTo(output)
+                }
             }
 
-            output.flush();
-            output.close();
-            input.close();
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
-            mediaPlayer.setDataSource(urlSound)
-            mediaPlayer.prepare()
-            return true
+            return file
         }
         catch (e: IOException) {
             Log.e("Play Sound", "Error in download")
             e.printStackTrace()
+            return null
         }
-        return false
+        return null
     }
 
-    override fun onPostExecute(result: Boolean?) {
+    override fun onPostExecute(result: File?) {
         super.onPostExecute(result)
-        if (result == true){
-            mediaPlayer.start()
-        }
-        else{
+        if (result == null) {
             Toast.makeText(context, "Audio Link unavailable", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            mediaPlayer = MediaPlayer.create(context, result.toUri())
+            mediaPlayer.start()
         }
     }
 }
