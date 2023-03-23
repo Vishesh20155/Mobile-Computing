@@ -94,7 +94,7 @@ class DetailsFragment : Fragment() {
         }
 
         if (wordDetailsList[idx!!].antonyms.size > 0) {
-            var txt = "Antonyms: "
+            var txt = ""
             val n = wordDetailsList[idx!!].antonyms.size
             for (i in 0 until n) {
                 txt += wordDetailsList[idx!!].antonyms[i]
