@@ -42,6 +42,7 @@ class DetailsFragment : Fragment() {
     private lateinit var tvAntonyms: TextView
     private lateinit var tvDefinition: TextView
     private lateinit var tvExample: TextView
+    private lateinit var tvPoS: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +76,9 @@ class DetailsFragment : Fragment() {
         tvAntonyms = view.findViewById(R.id.tv_antonyms)
         tvDefinition = view.findViewById(R.id.tv_details_definition)
         tvExample = view.findViewById(R.id.tv_details_example)
+        tvPoS = view.findViewById(R.id.tv_details_pos)
+
+        tvPoS.text = wordDetailsList[idx!!].partOfSpeech
 
         if (wordDetailsList[idx!!].synonyms.size > 0) {
             var txt = ""
