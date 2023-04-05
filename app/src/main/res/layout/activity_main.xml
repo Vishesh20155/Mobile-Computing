@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/ll_proximity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="30dp">
+
+        <ToggleButton
+            android:id="@+id/toggle_proximity"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textOff="Proximity Disabled"
+            android:textOn="Proximity Enabled"/>
+
+        <TextView
+            android:id="@+id/tv_proximity"
+            android:layout_marginLeft="50dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Disabled" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_proximity"
+        android:layout_margin="30dp"
+        android:orientation="horizontal">
+
+        <ToggleButton
+            android:id="@+id/toggle_light"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textOff="Light Disabled"
+            android:textOn="Light Enabled"/>
+
+        <TextView
+            android:id="@+id/tv_light"
+            android:layout_marginLeft="50dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Disabled" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_margin="50dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/btn_orient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Orient Phone"/>
+
+
+</RelativeLayout>
