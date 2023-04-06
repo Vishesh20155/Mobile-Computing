@@ -7,11 +7,40 @@
     tools:context=".OrientationActivity">
 
     <TextView
+        android:id="@+id/tv_inst"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="For Orientation, keep the device such that bottom edge is closest to you. \n\n (Assume z-axis points out from the screen)"/>
+
+    <TextView
+        android:id="@+id/tv_success"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_inst"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:background="#7CFC00"
+        android:textStyle="bold"
+        android:text="SUCCESSFULLY ORIENTED!!"
+        android:visibility="gone"/>
+
+    <TextView
         android:id="@+id/tv_geomag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Hello"/>
+        android:text="Hello" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/axes"/>
+
+
 
 
 </RelativeLayout>

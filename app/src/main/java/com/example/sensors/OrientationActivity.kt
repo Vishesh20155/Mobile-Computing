@@ -7,18 +7,18 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
+import kotlin.math.abs
 
 class OrientationActivity : AppCompatActivity(), SensorEventListener {
 
     private var isAligned = false
-    private var azimuth = 0f
-    private var targetAzimuth = 0f
+    private var isRegistered: Boolean = false
 
-    private lateinit var rotationMatrix: FloatArray
-    private lateinit var orientation: FloatArray
 //    private lateinit var compassView: ImageView
     private lateinit var tvGeoma: TextView
+    private lateinit var tvSuccess: TextView
 
     private lateinit var sensorManager: SensorManager
     private var geomagSensor: Sensor? = null
@@ -26,42 +26,54 @@ class OrientationActivity : AppCompatActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_orientation)
 
-        rotationMatrix = FloatArray(9)
-        orientation = FloatArray(3)
+//        rotationMatrix = FloatArray(9)
+//        orientation = FloatArray(3)
 
         // Get references to the compass and feedback views
 //        compassView = findViewById(R.id.compass_view)
         tvGeoma = findViewById(R.id.tv_geomag)
+        tvSuccess = findViewById(R.id.tv_success)
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         geomagSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR)
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR) {
-//            SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
-//            SensorManager.getOrientation(rotationMatrix, orientation)
-//
-//            azimuth = Math.toDegrees(orientation[0].toDouble()).toFloat()
-//            val declination = getMagneticDeclination()
-//            targetAzimuth = azimuth + declination
-//
-////            compassView.rotation = -azimuth
-//
-//            // Check if the device is aligned with the magnetic north pole
-//            if (!isAligned && abs(azimuth - targetAzimuth) < 5f) {
-//                isAligned = true
-//                feedbackView.text = "Success! Your phone is aligned with Earth's frame of reference."
-//            } else if (!isAligned) {
-//                // Calculate the rotation needed to align the device with the magnetic north pole
-//                val diff = (targetAzimuth - azimuth + 360f) % 360f
-//                val direction = if (diff > 180f) "right" else "left"
-//                val angle = min(diff, 360f - diff)
-//                val message = "Rotate $angle° $direction to align with Earth's frame of reference."
-//                feedbackView.text = message
-//            }
-
             val rotationVector = event.values
-            tvGeoma.text = rotationVector.size.toString()
+
+            val rotationMatrix = FloatArray(9)
+            val orientation = FloatArray(3)
+            SensorManager.getRotationMatrixFromVector(rotationMatrix, rotationVector)
+            SensorManager.getOrientation(rotationMatrix, orientation)
+
+            val z_orientation = Math.toDegrees(orientation[0].toDouble()).toFloat()
+            val x_orientation = Math.toDegrees(orientation[1].toDouble()).toFloat()
+            val y_orientation = Math.toDegrees(orientation[2].toDouble()).toFloat()
+
+//            tvGeoma.text = rotationVector.size.toString() +
+//                    "\n" + azimuthDegrees +
+//                    "\n" + pitchDegrees +
+//                    "\n" + rollDegrees +
+//                    "\n" + rotationVector[3] +
+//                    "\n" + rotationVector[4]
+
+            if (abs(z_orientation) <= 2) {
+                var direction = "left"
+                if(z_orientation<0) direction = "right"
+                tvGeoma.text = "Rotate the phone around z-axis towards $direction by ${abs(z_orientation)} deg"
+            }
+            else if (abs(x_orientation) <= 2) {
+
+            }
+            else if (abs(y_orientation) <= 2) {
+
+            }
+            else {
+                tvSuccess.visibility = View.VISIBLE
+                tvGeoma.visibility = View.GONE
+                sensorManager.unregisterListener(this)
+                isRegistered = false
+            }
         }
     }
 
@@ -77,11 +89,13 @@ class OrientationActivity : AppCompatActivity(), SensorEventListener {
         geomagSensor?.also { sensor ->
             sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
         }
+        isRegistered = true
     }
 
     override fun onPause() {
         super.onPause()
-        sensorManager.unregisterListener(this)
+        if (isRegistered)
+            sensorManager.unregisterListener(this)
     }
 
 }
