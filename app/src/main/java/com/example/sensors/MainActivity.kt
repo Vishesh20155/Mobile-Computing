@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var btnOrient: Button
 
     private lateinit var db: SensorDatabase
+    private lateinit var proximityDao: ProximityDao
+    private lateinit var lightDao: LightDao
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,6 +107,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             SensorDatabase::class.java,
             "Sensor-db"
         ).build()
+        proximityDao = db.proximityDao()
+        lightDao = db.lightDao()
     }
 
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
@@ -114,29 +118,39 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent) {
         if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
             val distance = event.values[0]
-            tvProximity.text = distance.toString()
-
-            val proximityDao = db.proximityDao()
-//            proximityDao.insert(ProximitySensorData(0, distance))
-            CoroutineScope(Dispatchers.IO).launch {
-                proximityDao.insert(ProximitySensorData(0, distance))
+            if (distance > 2) {
+                tvProximity.text = "Far (${distance.toString()} cm)"
             }
+            else {
+                tvProximity.text = "Near (${distance.toString()} cm)"
+                CoroutineScope(Dispatchers.IO).launch {
+                    proximityDao.insert(ProximitySensorData(0, distance, System.currentTimeMillis()))
+                }
+            }
+
+//            val proximityDao = db.proximityDao()
+//            proximityDao.insert(ProximitySensorData(0, distance))
+//            CoroutineScope(Dispatchers.IO).launch {
+//                proximityDao.insert(ProximitySensorData(0, distance))
+//            }
         }
         if (event.sensor.type == Sensor.TYPE_LIGHT) {
             val light = event.values[0]
-            tvLight.text = light.toString()
-            val lightDao = db.lightDao()
-            CoroutineScope(Dispatchers.IO).launch {
-                lightDao.insert(LightSensorData(0, light))
+            tvLight.text = light.toString() + " lx"
+
+            if (light<5) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    lightDao.insert(LightSensorData(0, light, System.currentTimeMillis()))
+                }
             }
         }
 
         if (event.sensor.type == Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR) {
             val geomag = event.values
-            tvGeoMagRotVec0.text = geomag[0].toString()
-            tvGeoMagRotVec1.text = geomag[1].toString()
-            tvGeoMagRotVec2.text = geomag[2].toString()
-            tvGeoMagRotVec3.text = geomag[3].toString()
+            tvGeoMagRotVec0.text = "about z-axis: " + geomag[0].toString()
+            tvGeoMagRotVec1.text = "about x-axis: " + geomag[1].toString()
+            tvGeoMagRotVec2.text = "about y-axis: " + geomag[2].toString()
+            tvGeoMagRotVec3.text = "scalar component: " + geomag[3].toString()
         }
         // Do something with this sensor data.
     }
