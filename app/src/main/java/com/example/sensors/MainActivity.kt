@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var db: SensorDatabase
     private lateinit var proximityDao: ProximityDao
     private lateinit var lightDao: LightDao
+    private lateinit var geomagDao: GeomagneticDao
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +110,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         ).build()
         proximityDao = db.proximityDao()
         lightDao = db.lightDao()
+        geomagDao = db.geomagneticDao()
     }
 
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
@@ -151,6 +153,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             tvGeoMagRotVec1.text = "about x-axis: " + geomag[1].toString()
             tvGeoMagRotVec2.text = "about y-axis: " + geomag[2].toString()
             tvGeoMagRotVec3.text = "scalar component: " + geomag[3].toString()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                geomagDao.insert(GeomagneticSensorData(0, geomag[0], geomag[1], geomag[2], geomag[3], System.currentTimeMillis()))
+            }
         }
         // Do something with this sensor data.
     }
