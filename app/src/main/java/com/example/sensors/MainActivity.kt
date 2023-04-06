@@ -133,10 +133,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         if (event.sensor.type == Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR) {
             val geomag = event.values
-//            tvGeoMagRotVec0.text = geomag[0].toString()
+            tvGeoMagRotVec0.text = geomag[0].toString()
             tvGeoMagRotVec1.text = geomag[1].toString()
-//            tvGeoMagRotVec2.text = geomag[2].toString()
-//            tvGeoMagRotVec3.text = geomag[3].toString()
+            tvGeoMagRotVec2.text = geomag[2].toString()
+            tvGeoMagRotVec3.text = geomag[3].toString()
         }
         // Do something with this sensor data.
     }

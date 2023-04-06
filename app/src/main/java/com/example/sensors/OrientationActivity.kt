@@ -50,23 +50,33 @@ class OrientationActivity : AppCompatActivity(), SensorEventListener {
             val x_orientation = Math.toDegrees(orientation[1].toDouble()).toFloat()
             val y_orientation = Math.toDegrees(orientation[2].toDouble()).toFloat()
 
+            val scalar = event.values[3]
+            handleScalar(scalar)
+
 //            tvGeoma.text = rotationVector.size.toString() +
-//                    "\n" + azimuthDegrees +
-//                    "\n" + pitchDegrees +
-//                    "\n" + rollDegrees +
+//                    "\n" + z_orientation +
+//                    "\n" + x_orientation +
+//                    "\n" + y_orientation +
 //                    "\n" + rotationVector[3] +
 //                    "\n" + rotationVector[4]
 
-            if (abs(z_orientation) <= 2) {
+            if (abs(z_orientation) > 2) {
                 var direction = "left"
                 if(z_orientation<0) direction = "right"
                 tvGeoma.text = "Rotate the phone around z-axis towards $direction by ${abs(z_orientation)} deg"
             }
-            else if (abs(x_orientation) <= 2) {
-
+            else if (abs(x_orientation) > 2) {
+                var direction = "upwards"
+                if(x_orientation<0) direction = "downwards"
+                tvGeoma.text = "Tilt the phone (top edge) about x-axis $direction by ${abs(x_orientation)} deg"
             }
-            else if (abs(y_orientation) <= 2) {
-
+            else if (abs(y_orientation) > 2) {
+                if (y_orientation<0) {
+                    tvGeoma.text = "Tilt the phone about y-axis rightwards by ${abs(y_orientation)} deg"
+                }
+                else {
+                    tvGeoma.text = "Tilt the phone about y-axis leftwards by ${abs(y_orientation)} deg"
+                }
             }
             else {
                 tvSuccess.visibility = View.VISIBLE
@@ -94,8 +104,26 @@ class OrientationActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onPause() {
         super.onPause()
-        if (isRegistered)
+        if (isRegistered) {
             sensorManager.unregisterListener(this)
+            isRegistered = false
+        }
+    }
+
+    fun btn_restart(view: View) {
+        if (!isRegistered) {
+            geomagSensor?.also { sensor ->
+                sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+            }
+            isRegistered = true
+        }
+        tvSuccess.visibility = View.GONE
+        tvGeoma.visibility = View.VISIBLE
+    }
+
+    private fun handleScalar(sc: Float): String{
+        if(sc >= 0.98) return "Done"
+        else return "Keep rotating"
     }
 
 }
