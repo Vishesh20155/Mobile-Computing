@@ -112,7 +112,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             applicationContext,
             SensorDatabase::class.java,
             "Sensor-db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
         proximityDao = db.proximityDao()
         lightDao = db.lightDao()
         geomagDao = db.geomagneticDao()
