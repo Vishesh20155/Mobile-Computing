@@ -112,6 +112,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Disabled" />
+
+            <TextView
+                android:id="@+id/tv_geomagnetic_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Disabled" />
         </LinearLayout>
 
     </LinearLayout>

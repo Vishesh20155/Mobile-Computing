@@ -8,6 +8,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.ToggleButton
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var tvGeoMagRotVec1: TextView
     private lateinit var tvGeoMagRotVec2: TextView
     private lateinit var tvGeoMagRotVec3: TextView
+    private lateinit var tvGeoMagRotVec4: TextView
     private lateinit var toggleGeoMatRotVec: ToggleButton
 
     private lateinit var btnOrient: Button
@@ -64,6 +66,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         tvGeoMagRotVec1 = findViewById(R.id.tv_geomagnetic_1)
         tvGeoMagRotVec2 = findViewById(R.id.tv_geomagnetic_2)
         tvGeoMagRotVec3 = findViewById(R.id.tv_geomagnetic_3)
+        tvGeoMagRotVec4 = findViewById(R.id.tv_geomagnetic_4)
+
 
         toggleProximity = findViewById(R.id.toggle_proximity)
         toggleProximity.setOnCheckedChangeListener { _, isChecked ->
@@ -100,6 +104,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 tvGeoMagRotVec1.text = "Disabled"
                 tvGeoMagRotVec2.text = "Disabled"
                 tvGeoMagRotVec3.text = "Disabled"
+                tvGeoMagRotVec4.text = "Disabled"
             }
         }
 
@@ -120,14 +125,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent) {
         if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
             val distance = event.values[0]
+            CoroutineScope(Dispatchers.IO).launch {
+                proximityDao.insert(ProximitySensorData(0, distance, event.timestamp))
+            }
             if (distance > 2) {
                 tvProximity.text = "Far (${distance.toString()} cm)"
             }
             else {
                 tvProximity.text = "Near (${distance.toString()} cm)"
-                CoroutineScope(Dispatchers.IO).launch {
-                    proximityDao.insert(ProximitySensorData(0, distance, System.currentTimeMillis()))
-                }
+                Log.i("PROXIMITY_SENSOR", "Value in proximity Sensor: $distance cm")
             }
 
 //            val proximityDao = db.proximityDao()
@@ -139,11 +145,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (event.sensor.type == Sensor.TYPE_LIGHT) {
             val light = event.values[0]
             tvLight.text = light.toString() + " lx"
-
+            CoroutineScope(Dispatchers.IO).launch {
+                lightDao.insert(LightSensorData(0, light, event.timestamp))
+            }
             if (light<5) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    lightDao.insert(LightSensorData(0, light, System.currentTimeMillis()))
-                }
+                Log.i("LIGHT_SENSOR", "Value in Light Sensor: $light lx")
             }
         }
 
@@ -153,10 +159,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             tvGeoMagRotVec1.text = "about x-axis: " + geomag[1].toString()
             tvGeoMagRotVec2.text = "about y-axis: " + geomag[2].toString()
             tvGeoMagRotVec3.text = "scalar component: " + geomag[3].toString()
+            tvGeoMagRotVec4.text = "Correctness: " + geomag[4].toString()
 
             CoroutineScope(Dispatchers.IO).launch {
-                geomagDao.insert(GeomagneticSensorData(0, geomag[0], geomag[1], geomag[2], geomag[3], System.currentTimeMillis()))
+                geomagDao.insert(GeomagneticSensorData(0, geomag[0], geomag[1], geomag[2], geomag[3], geomag[4], event.timestamp))
             }
+            Log.i("GEOMAGNETIC_ROTATION_VECTOR_SENSOR", "Values in Geomagnetic Rotation Vector Sensor: Rotation along x-axis: ${geomag[0]}, Rotation along y-axis: ${geomag[1]}, Rotation along z-axis: ${geomag[2]}, Scalar component of Rotation: ${geomag[3]}, Correctness: ${geomag[4]}")
         }
         // Do something with this sensor data.
     }

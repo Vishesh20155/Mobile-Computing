@@ -11,5 +11,6 @@ data class GeomagneticSensorData(
     @ColumnInfo(name = "x_orientation") val x_orient: Float,
     @ColumnInfo(name = "y_orientation") val y_orient: Float,
     @ColumnInfo(name = "rot_scalar") val rot_scalar: Float,
+    @ColumnInfo(name = "correctness") val correctness: Float,
     @ColumnInfo(name = "timestamp") val time: Long
 )
