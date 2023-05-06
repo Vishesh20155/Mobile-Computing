@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private val accVec = FloatArray(3)
     private var magnetometerSensor: Sensor? = null
     private lateinit var tvMagnetometer: TextView
+    private lateinit var tvDirection: TextView
 
 
     private lateinit var sensorManager: SensorManager
@@ -109,6 +110,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 sensorManager.unregisterListener(this, magnetometerSensor)
                 tvAccelerometer.text = "Disabled"
                 tvMagnetometer.text = "Disabled"
+                tvDirection.text = "Disabled"
                 initialized = false
             }
         }
@@ -155,6 +157,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         accVec[1] = 0.0f
         accVec[2] = 9.8f
         tvMagnetometer = findViewById(R.id.tv_magnetometer)
+        tvDirection = findViewById(R.id.tv_direction)
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -227,11 +230,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 }
                 currAngle = rotAngleZ
                 tvMagnetometer.text = (currAngle-initialAngle).toString()
+                getDirectionFromDegrees(rotAngleZ)
             }
         }
         else {
             tvAccelerometer.text = "Disabled"
             tvMagnetometer.text = "Disabled"
+            tvDirection.text = "Disabled"
         }
     }
 
@@ -272,6 +277,33 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //                    srfHolder.unlockCanvasAndPost(canvas)
                 }
             }
+        }
+    }
+
+    private fun getDirectionFromDegrees(x: Double) {
+        if(x <= 22.5 && x >= -22.5){
+            tvDirection.text = "North"
+        }
+        else if(x < -22.5 && x >= -67.5){
+            tvDirection.text = "North-West"
+        }
+        else if(x < -67.5 && x >= -112.5){
+            tvDirection.text = "West"
+        }
+        else if(x < -112.5 && x >= -157.5){
+            tvDirection.text = "South-West"
+        }
+        else if(x < -157.5 || x >= 157.5){
+            tvDirection.text = "South"
+        }
+        else if(x < 157.5 && x >= 112.5){
+            tvDirection.text = "South-East"
+        }
+        else if(x < 112.5 && x >= 67.5){
+            tvDirection.text = "East"
+        }
+        else if(x < 67.5 && x > 22.5){
+            tvDirection.text = "North-East"
         }
     }
 
