@@ -12,9 +12,7 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import android.widget.Button
-import android.widget.TextView
-import android.widget.ToggleButton
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
@@ -34,6 +32,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private val paint = Paint()
     private val walkingCoordinatesX = mutableListOf<Float>()
     private val walkingCoordinatesY = mutableListOf<Float>()
+
+//    For distance and displacement
+    private lateinit var tvDistance: TextView
+    private lateinit var tvDisplacement: TextView
+    private lateinit var tbMale: ToggleButton
+    private lateinit var etHeight: EditText
+    private lateinit var etWeight: EditText
+    var strideLength = 74.7f
 
 
 //    For direction
@@ -132,8 +138,23 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             startActivity(intent)
         }
 
-        btnStep.setOnClickListener {
+        tvDistance = findViewById(R.id.tv_distance)
+        tvDisplacement = findViewById(R.id.tv_displacement)
+        etHeight = findViewById(R.id.et_inp_height)
+        etWeight = findViewById(R.id.et_inp_weight)
+        tbMale = findViewById(R.id.tb_male)
 
+
+        btnStep.setOnClickListener {
+            var multiplier = 0.415f
+            multiplier = if (!tbMale.isChecked) {
+                0.415f
+            } else {
+                0.413f
+            }
+            strideLength = etHeight.text.toString().toFloat() * multiplier
+
+            Toast.makeText(applicationContext, "Stride Length = $strideLength", Toast.LENGTH_SHORT).show()
             val canvas = srfHolder.lockCanvas()
 //            for (i in 0..simulatedSteps) {
 //                canvas.drawPoint(500f + 0 * i, 1000f - 30 * i, paint)
@@ -144,6 +165,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 canvas.drawPoint(walkingCoordinatesX[i], walkingCoordinatesY[i], paint)
             }
             srfHolder.unlockCanvasAndPost(canvas)
+
+            tvDistance.text = (mStepCounter.toFloat() * strideLength).toString()
         }
 
         paint.color = Color.CYAN

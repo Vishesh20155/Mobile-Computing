@@ -53,10 +53,82 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_inp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_below="@+id/ll_mag_data">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Height (cm): "/>
+
+        <EditText
+            android:id="@+id/et_inp_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="180"/>
+        <TextView
+            android:layout_marginStart="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weight (kg): "/>
+
+        <EditText
+            android:id="@+id/et_inp_weight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="80"/>
+
+        <ToggleButton
+            android:id="@+id/tb_male"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textOff="Male"
+            android:textOn="Female"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_dist_data"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@+id/ll_inp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distance(cm) :"/>
+
+        <TextView
+            android:id="@+id/tv_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:text="0"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Displacement(cm) :"/>
+
+        <TextView
+            android:id="@+id/tv_displacement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:text="0"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/ll_step_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ll_mag_data"
+        android:layout_below="@+id/ll_dist_data"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
