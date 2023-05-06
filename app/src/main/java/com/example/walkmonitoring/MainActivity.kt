@@ -163,7 +163,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //            simulatedSteps++
 
             for (i in 0 until walkingCoordinatesX.size) {
-                canvas.drawPoint(walkingCoordinatesX[i], 1600-walkingCoordinatesY[i], paint)
+//                canvas.drawPoint(walkingCoordinatesX[i], walkingCoordinatesY[i], paint)
+                if(i==0) {
+                    canvas.drawLine(500f, 1000f, walkingCoordinatesX[i], walkingCoordinatesY[i], paint)
+                }
+                else {
+                    canvas.drawLine(walkingCoordinatesX[i-1], walkingCoordinatesY[i-1], walkingCoordinatesX[i], walkingCoordinatesY[i], paint)
+                }
             }
             srfHolder.unlockCanvasAndPost(canvas)
             tvDisplacement.text = (sqrt(displacementX*displacementX + displacementY*displacementY)).toString()
@@ -174,7 +180,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         paint.color = Color.CYAN
         paint.isAntiAlias = true
         paint.style = Paint.Style.FILL
-        paint.strokeWidth = 15F
+        paint.strokeWidth = 5F
 
 //        Code for Direction Part:
         magnetometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
@@ -293,7 +299,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 if (forwardSlope < 0 && downwardSlope > 0 && dataPointList[i].y > stepThreshold && dataPointList[i].y < noiseThreshold) {
                     mStepCounter += 1
                     walkingCoordinatesX.add((500f+30*sin((currAngle-initialAngle)*(Math.PI/180))*mStepCounter).toFloat())
-                    walkingCoordinatesY.add((500+30*cos((currAngle-initialAngle)*(Math.PI/180))*mStepCounter).toFloat())
+                    walkingCoordinatesY.add((1000f-30*cos((currAngle-initialAngle)*(Math.PI/180))*mStepCounter).toFloat())
 
                     displacementY += strideLength*cos((currAngle-initialAngle)*(Math.PI/180))
                     displacementX += strideLength*sin((currAngle-initialAngle)*(Math.PI/180))
