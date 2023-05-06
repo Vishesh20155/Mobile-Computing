@@ -27,6 +27,12 @@
             android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:text="Disabled"/>
+        <TextView
+            android:id="@+id/tv_magnetometer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Disabled"
+            android:layout_marginStart="10dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -58,7 +64,15 @@
             android:id="@+id/btn_stair_activity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="120dp"/>
+            android:layout_marginLeft="20dp"
+            android:text="Stairs"/>
+
+        <Button
+            android:id="@+id/btn_step_simulator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Plot Trajectory"/>
     </LinearLayout>
 
     <LinearLayout
@@ -68,19 +82,26 @@
         android:orientation="vertical"
         android:weightSum="2">
 
-        <com.jjoe64.graphview.GraphView
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:id="@+id/graph" />
+<!--        <com.jjoe64.graphview.GraphView-->
+<!--            android:layout_weight="1"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:id="@+id/graph" />-->
 
-        <com.jjoe64.graphview.GraphView
+        <SurfaceView
+            android:id="@+id/surface_view_trajectoory"
             android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:id="@+id/graph2" />
+            android:layout_width="match_parent"
+            android:layout_height="700dp"/>
+
+<!--        <com.jjoe64.graphview.GraphView-->
+<!--            android:layout_weight="1"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:id="@+id/graph2" />-->
 
     </LinearLayout>
 

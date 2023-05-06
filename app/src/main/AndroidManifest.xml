@@ -12,6 +12,16 @@
         android:theme="@style/Theme.WalkMonitoring"
         tools:targetApi="31">
         <activity
+            android:name=".DrawActivity"
+            android:exported="false" >
+
+        </activity>
+        <activity
+            android:name=".PdrActivity"
+            android:exported="false">
+
+        </activity>
+        <activity
             android:name=".StairElevatorActivity"
             android:exported="false" />
         <activity

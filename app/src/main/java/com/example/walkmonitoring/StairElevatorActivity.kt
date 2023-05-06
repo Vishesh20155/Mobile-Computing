@@ -19,6 +19,7 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
 
     private var accelerometerSensor: Sensor? = null
+    private var magnetometerSensor: Sensor? = null
     private lateinit var tvStair: TextView
     private lateinit var tvAccelerometer: TextView
 
@@ -37,13 +38,13 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
     private var avgMag = 0.0
     private var netMag = 0.0
 
-    private val smoothingWindowSize = 20
+    private val smoothingWindowSize = 3
     private val mAccelValueHistory = FloatArray(smoothingWindowSize)
     private var mCurReadIndex = 0
 
     //peak detection variables
     private var lastXPoint = 1.0
-    var stepThreshold = 1.3
+    var stepThreshold = 2.4
     var noiseThreshold = 2.0
     private val windowSize = 10
 
@@ -53,9 +54,12 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        magnetometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+
         tvStair = findViewById(R.id.tv_is_stair)
         tvAccelerometer = findViewById(R.id.tv_acc_stair)
         sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(this, magnetometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
 
         val graph = findViewById<GraphView>(R.id.graph_stairs)
         mSeries1 = LineGraphSeries()
@@ -106,7 +110,10 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
 
                 avgMag = mCurAccelAvg
 
-                netMag = lastMag - avgMag; //removes gravity effect
+                if (lastMag - avgMag > 0.2)
+                    netMag = lastMag - avgMag; //removes gravity effect
+
+//                netMag = lastMag - avgMag; //removes gravity effect
 
                 //update graph data points
 
@@ -117,7 +124,19 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
                 mGraph2LastXValue += 1.0
                 mSeries2!!.appendData(DataPoint(mGraph2LastXValue, netMag), true, 60)
 
-                peakDetection()
+                if(netMag > 5 && mGraph2LastXValue>20)
+                    tvStair.text = "Climbing"
+//                peakDetection()
+            }
+
+            if(event.sensor.type == Sensor.TYPE_MAGNETIC_FIELD) {
+                val mag = sqrt(event.values[0]*event.values[0] + event.values[1]*event.values[1] + event.values[2]*event.values[2])
+                if(mag < 20) {
+                    tvStair.text = "Lift"
+                }
+                else {
+                    tvStair.text = "Nothing"
+                }
             }
         }
         else {
@@ -159,5 +178,10 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
         println("Accuracy changed")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sensorManager.unregisterListener(this)
     }
 }

@@ -2,23 +2,48 @@ package com.example.walkmonitoring
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.view.SurfaceHolder
+import android.view.SurfaceView
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
+import kotlin.math.cos
 import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
+
+    private lateinit var srfView: SurfaceView
+    private lateinit var srfHolder: SurfaceHolder
+    private lateinit var btnStep: Button
+
+    var simulatedSteps = 0
+    private val paint = Paint()
+
+//    For direction
+    var initialized = false
+    var initialAngle = 0.0
+    var currAngle = 0.0
+    private val accVec = FloatArray(3)
+    private var magnetometerSensor: Sensor? = null
+    private lateinit var tvMagnetometer: TextView
+
 
     private lateinit var sensorManager: SensorManager
     private lateinit var btnNextAct: Button
@@ -69,39 +94,65 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         toggleAccelerometer = findViewById(R.id.tb_accelerometer)
         tvAccelerometer = findViewById(R.id.tv_accelerometer)
 
+        btnStep = findViewById(R.id.btn_step_simulator)
+        srfView = findViewById(R.id.surface_view_trajectoory)
+        srfHolder = srfView.holder
+
         toggleAccelerometer.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
+                sensorManager.registerListener(this, magnetometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
+//                initialized = true
             }
             else {
                 sensorManager.unregisterListener(this, accelerometerSensor)
+                sensorManager.unregisterListener(this, magnetometerSensor)
                 tvAccelerometer.text = "Disabled"
+                tvMagnetometer.text = "Disabled"
+                initialized = false
             }
         }
 
-        val graph = findViewById<GraphView>(R.id.graph)
         mSeries1 = LineGraphSeries()
-        graph.addSeries(mSeries1)
-        graph.title = "Accelerator Signal"
-        graph.gridLabelRenderer.verticalAxisTitle = "Signal Value"
-        graph.viewport.isXAxisBoundsManual = true
-        graph.viewport.setMinX(0.0)
-        graph.viewport.setMaxX(60.0)
 
-        val graph2 = findViewById<GraphView>(R.id.graph2)
+//        val graph2 = findViewById<GraphView>(R.id.graph2)
         mSeries2 = LineGraphSeries()
-        graph2.title = "Smoothed Signal"
-        graph2.addSeries(mSeries2)
-        graph2.gridLabelRenderer.verticalAxisTitle = "Signal Value"
-        graph2.viewport.isXAxisBoundsManual = true
-        graph2.viewport.setMinX(0.0)
-        graph2.viewport.setMaxX(60.0)
+//        graph2.title = "Smoothed Signal"
+//        graph2.addSeries(mSeries2)
+//        graph2.gridLabelRenderer.verticalAxisTitle = "Signal Value"
+//        graph2.viewport.isXAxisBoundsManual = true
+//        graph2.viewport.setMinX(0.0)
+//        graph2.viewport.setMaxX(60.0)
 
         btnNextAct = findViewById(R.id.btn_stair_activity)
         btnNextAct.setOnClickListener {
             val intent = Intent(this, StairElevatorActivity::class.java)
             startActivity(intent)
         }
+
+        btnStep.setOnClickListener {
+//            Toast.makeText(this, "Clicked Button ${simulatedSteps.toString()}", Toast.LENGTH_SHORT).show()
+//            val bitmap = Bitmap.createBitmap(srfView.width, srfView.height, Bitmap.Config.ARGB_8888)
+
+            val canvas = srfHolder.lockCanvas()
+            for (i in 0..simulatedSteps) {
+                canvas.drawPoint(500f + 20 * i, 700f - 20 * i, paint)
+            }
+            srfHolder.unlockCanvasAndPost(canvas)
+            simulatedSteps++
+        }
+
+        paint.color = Color.CYAN
+        paint.isAntiAlias = true
+        paint.style = Paint.Style.FILL
+        paint.strokeWidth = 15F
+
+//        Code for Direction Part:
+        magnetometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+        accVec[0] = 0.0f
+        accVec[1] = 0.0f
+        accVec[2] = 9.8f
+        tvMagnetometer = findViewById(R.id.tv_magnetometer)
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -110,6 +161,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 val x = event.values[0]
                 val y = event.values[1]
                 val z = event.values[2]
+
+                accVec[0] = x
+                accVec[1] = y
+                accVec[2] = z
                 tvAccelerometer.text = x.toString()+"\n"+y.toString()+"\n"+z.toString()
 
                 mRawAccelValues[0] = event.values[0];
@@ -155,9 +210,26 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 val tvSteps = findViewById<TextView>(R.id.tv_num_steps)
                 tvSteps.text = mStepCounter.toString()
             }
+
+            if (event.sensor.type == Sensor.TYPE_MAGNETIC_FIELD) {
+                val rotationMatrix = FloatArray(9)
+//                SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
+                SensorManager.getRotationMatrix(rotationMatrix, null, accVec, event.values)
+                val orientation = FloatArray(3)
+                SensorManager.getOrientation(rotationMatrix, orientation)
+                val rotAngleZ = orientation[0] * 180 / Math.PI
+
+                if (!initialized) {
+                    initialAngle = rotAngleZ
+                    initialized = true
+                }
+                currAngle = rotAngleZ
+                tvMagnetometer.text = (currAngle-initialAngle).toString()
+            }
         }
         else {
             tvAccelerometer.text = "Disabled"
+            tvMagnetometer.text = "Disabled"
         }
     }
 
@@ -188,6 +260,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 downwardSlope = dataPointList[i].y - dataPointList[i - 1].y
                 if (forwardSlope < 0 && downwardSlope > 0 && dataPointList[i].y > stepThreshold && dataPointList[i].y < noiseThreshold) {
                     mStepCounter += 1
+                    val canvas = srfHolder.lockCanvas()
+                    for (i in 0..mStepCounter.roundToInt()){
+                        canvas.drawPoint(500f+0*i,
+                            (700f-50* cos(currAngle-initialAngle)).toFloat(), paint)
+                    }
+                    srfHolder.unlockCanvasAndPost(canvas)
                 }
             }
         }
