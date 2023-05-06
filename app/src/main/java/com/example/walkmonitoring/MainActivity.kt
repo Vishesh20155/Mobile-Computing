@@ -16,10 +16,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
-import kotlin.math.cos
-import kotlin.math.pow
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
+import kotlin.math.*
 
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
@@ -40,6 +37,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var etHeight: EditText
     private lateinit var etWeight: EditText
     var strideLength = 74.7f
+    var displacementX = 0.0
+    var displacementY = 0.0
+
 
 
 //    For direction
@@ -107,6 +107,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         toggleAccelerometer.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
+                var multiplier = 0.415f
+                multiplier = if (!tbMale.isChecked) {
+                    0.415f
+                } else {
+                    0.413f
+                }
+                strideLength = etHeight.text.toString().toFloat() * multiplier
+
+                Toast.makeText(applicationContext, "Stride Length = $strideLength", Toast.LENGTH_SHORT).show()
+
                 sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
                 sensorManager.registerListener(this, magnetometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
 //                initialized = true
@@ -146,15 +156,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
 
         btnStep.setOnClickListener {
-            var multiplier = 0.415f
-            multiplier = if (!tbMale.isChecked) {
-                0.415f
-            } else {
-                0.413f
-            }
-            strideLength = etHeight.text.toString().toFloat() * multiplier
-
-            Toast.makeText(applicationContext, "Stride Length = $strideLength", Toast.LENGTH_SHORT).show()
             val canvas = srfHolder.lockCanvas()
 //            for (i in 0..simulatedSteps) {
 //                canvas.drawPoint(500f + 0 * i, 1000f - 30 * i, paint)
@@ -162,10 +163,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //            simulatedSteps++
 
             for (i in 0 until walkingCoordinatesX.size) {
-                canvas.drawPoint(walkingCoordinatesX[i], walkingCoordinatesY[i], paint)
+                canvas.drawPoint(walkingCoordinatesX[i], 1600-walkingCoordinatesY[i], paint)
             }
             srfHolder.unlockCanvasAndPost(canvas)
-
+            tvDisplacement.text = (sqrt(displacementX*displacementX + displacementY*displacementY)).toString()
+            Toast.makeText(applicationContext, "X: $displacementX Y:$displacementY", Toast.LENGTH_SHORT).show()
             tvDistance.text = (mStepCounter.toFloat() * strideLength).toString()
         }
 
@@ -290,8 +292,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 downwardSlope = dataPointList[i].y - dataPointList[i - 1].y
                 if (forwardSlope < 0 && downwardSlope > 0 && dataPointList[i].y > stepThreshold && dataPointList[i].y < noiseThreshold) {
                     mStepCounter += 1
-                    walkingCoordinatesX.add(500f+0*mStepCounter)
-                    walkingCoordinatesY.add(1000f-30f*mStepCounter)
+                    walkingCoordinatesX.add((500f+30*sin((currAngle-initialAngle)*(Math.PI/180))*mStepCounter).toFloat())
+                    walkingCoordinatesY.add((500+30*cos((currAngle-initialAngle)*(Math.PI/180))*mStepCounter).toFloat())
+
+                    displacementY += strideLength*cos((currAngle-initialAngle)*(Math.PI/180))
+                    displacementX += strideLength*sin((currAngle-initialAngle)*(Math.PI/180))
 //                    val canvas = srfHolder.lockCanvas()
 //                    for (i in 0..mStepCounter.roundToInt()){
 //                        canvas.drawPoint(500f+0*i,
