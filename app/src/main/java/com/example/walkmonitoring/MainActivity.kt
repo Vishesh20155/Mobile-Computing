@@ -2,10 +2,9 @@ package com.example.walkmonitoring
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -15,10 +14,8 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
-import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
 import kotlin.math.cos
@@ -35,6 +32,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     var simulatedSteps = 0
     private val paint = Paint()
+    private val walkingCoordinatesX = mutableListOf<Float>()
+    private val walkingCoordinatesY = mutableListOf<Float>()
+
 
 //    For direction
     var initialized = false
@@ -131,15 +131,17 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
 
         btnStep.setOnClickListener {
-//            Toast.makeText(this, "Clicked Button ${simulatedSteps.toString()}", Toast.LENGTH_SHORT).show()
-//            val bitmap = Bitmap.createBitmap(srfView.width, srfView.height, Bitmap.Config.ARGB_8888)
 
             val canvas = srfHolder.lockCanvas()
-            for (i in 0..simulatedSteps) {
-                canvas.drawPoint(500f + 20 * i, 700f - 20 * i, paint)
+//            for (i in 0..simulatedSteps) {
+//                canvas.drawPoint(500f + 0 * i, 1000f - 30 * i, paint)
+//            }
+//            simulatedSteps++
+
+            for (i in 0 until walkingCoordinatesX.size) {
+                canvas.drawPoint(walkingCoordinatesX[i], walkingCoordinatesY[i], paint)
             }
             srfHolder.unlockCanvasAndPost(canvas)
-            simulatedSteps++
         }
 
         paint.color = Color.CYAN
@@ -260,12 +262,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 downwardSlope = dataPointList[i].y - dataPointList[i - 1].y
                 if (forwardSlope < 0 && downwardSlope > 0 && dataPointList[i].y > stepThreshold && dataPointList[i].y < noiseThreshold) {
                     mStepCounter += 1
-                    val canvas = srfHolder.lockCanvas()
-                    for (i in 0..mStepCounter.roundToInt()){
-                        canvas.drawPoint(500f+0*i,
-                            (700f-50* cos(currAngle-initialAngle)).toFloat(), paint)
-                    }
-                    srfHolder.unlockCanvasAndPost(canvas)
+                    walkingCoordinatesX.add(500f+0*mStepCounter)
+                    walkingCoordinatesY.add(1000f-30f*mStepCounter)
+//                    val canvas = srfHolder.lockCanvas()
+//                    for (i in 0..mStepCounter.roundToInt()){
+//                        canvas.drawPoint(500f+0*i,
+//                            1000f-30f*i, paint)
+//                    }
+//                    srfHolder.unlockCanvasAndPost(canvas)
                 }
             }
         }
