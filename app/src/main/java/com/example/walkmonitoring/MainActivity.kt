@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -25,7 +24,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var srfHolder: SurfaceHolder
     private lateinit var btnStep: Button
 
-    var simulatedSteps = 0
     private val paint = Paint()
     private val walkingCoordinatesX = mutableListOf<Float>()
     private val walkingCoordinatesY = mutableListOf<Float>()
@@ -59,24 +57,22 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var tvAccelerometer: TextView
     private lateinit var toggleAccelerometer: ToggleButton
 
-    //    For Graph:
-    private var mSeries1: LineGraphSeries<DataPoint?>? = null
-    private var mSeries2: LineGraphSeries<DataPoint>? = null
+    private var graphVals1: LineGraphSeries<DataPoint?>? = null
+    private var graphSeries2: LineGraphSeries<DataPoint>? = null
 
-    private val mRawAccelValues = FloatArray(3)
-    private val mRunningAccelTotal = FloatArray(3)
-    private val mCurAccelAvg = FloatArray(3)
-    var mSensorCount = 0
+    private val currAccVals = FloatArray(3)
+    private val netAccelMovingVals = FloatArray(3)
+    private val accAvgVals = FloatArray(3)
 
-    private var mGraph1LastXValue = 0.0
-    private var mGraph2LastXValue = 0.0
+    private var graph1PrevX = 0.0
+    private var graph2PrevX = 0.0
 
     private var lastMag: Double = 0.0
     private var avgMag = 0.0
     private var netMag = 0.0
 
     private val smoothingWindowSize = 20
-    private val mAccelValueHistory = Array(3) {
+    private val accPrevVals = Array(3) {
         FloatArray(
             smoothingWindowSize
         )
@@ -89,7 +85,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     var noiseThreshold = 2.0
     private val windowSize = 10
 
-    var mStepCounter = 0f
+    var stepCounterVal = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,16 +127,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             }
         }
 
-        mSeries1 = LineGraphSeries()
+        graphVals1 = LineGraphSeries()
 
-//        val graph2 = findViewById<GraphView>(R.id.graph2)
-        mSeries2 = LineGraphSeries()
-//        graph2.title = "Smoothed Signal"
-//        graph2.addSeries(mSeries2)
-//        graph2.gridLabelRenderer.verticalAxisTitle = "Signal Value"
-//        graph2.viewport.isXAxisBoundsManual = true
-//        graph2.viewport.setMinX(0.0)
-//        graph2.viewport.setMaxX(60.0)
+        graphSeries2 = LineGraphSeries()
 
         btnNextAct = findViewById(R.id.btn_stair_activity)
         btnNextAct.setOnClickListener {
@@ -174,7 +163,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             srfHolder.unlockCanvasAndPost(canvas)
             tvDisplacement.text = (sqrt(displacementX*displacementX + displacementY*displacementY)).toString()
             Toast.makeText(applicationContext, "X: $displacementX Y:$displacementY", Toast.LENGTH_SHORT).show()
-            tvDistance.text = (mStepCounter.toFloat() * strideLength).toString()
+            tvDistance.text = (stepCounterVal.toFloat() * strideLength).toString()
         }
 
         paint.color = Color.CYAN
@@ -203,23 +192,23 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 accVec[2] = z
                 tvAccelerometer.text = x.toString()+"\n"+y.toString()+"\n"+z.toString()
 
-                mRawAccelValues[0] = event.values[0];
-                mRawAccelValues[1] = event.values[1];
-                mRawAccelValues[2] = event.values[2];
+                currAccVals[0] = event.values[0];
+                currAccVals[1] = event.values[1];
+                currAccVals[2] = event.values[2];
 
                 lastMag = sqrt(
-                    mRawAccelValues[0].pow(2) + mRawAccelValues[1].pow(2) + mRawAccelValues[2].pow(
+                    currAccVals[0].pow(2) + currAccVals[1].pow(2) + currAccVals[2].pow(
                         2
                     )
                 ).toDouble();
 
                 for (i in 0..2) {
-                    mRunningAccelTotal[i] =
-                        mRunningAccelTotal[i] - mAccelValueHistory[i][mCurReadIndex]
-                    mAccelValueHistory[i][mCurReadIndex] = mRawAccelValues[i]
-                    mRunningAccelTotal[i] =
-                        mRunningAccelTotal[i] + mAccelValueHistory[i][mCurReadIndex]
-                    mCurAccelAvg[i] = mRunningAccelTotal[i] / smoothingWindowSize
+                    netAccelMovingVals[i] =
+                        netAccelMovingVals[i] - accPrevVals[i][mCurReadIndex]
+                    accPrevVals[i][mCurReadIndex] = currAccVals[i]
+                    netAccelMovingVals[i] =
+                        netAccelMovingVals[i] + accPrevVals[i][mCurReadIndex]
+                    accAvgVals[i] = netAccelMovingVals[i] / smoothingWindowSize
                 }
                 mCurReadIndex++;
                 if(mCurReadIndex >= smoothingWindowSize){
@@ -227,7 +216,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 }
 
                 avgMag = sqrt(
-                    mCurAccelAvg[0].pow(2) + mCurAccelAvg[1].pow(2) + mCurAccelAvg[2].pow(2)
+                    accAvgVals[0].pow(2) + accAvgVals[1].pow(2) + accAvgVals[2].pow(2)
                 ).toDouble()
 
                 netMag = lastMag - avgMag; //removes gravity effect
@@ -235,16 +224,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 //update graph data points
 
                 //update graph data points
-                mGraph1LastXValue += 1.0
-                mSeries1!!.appendData(DataPoint(mGraph1LastXValue, lastMag), true, 60)
+                graph1PrevX += 1.0
+                graphVals1!!.appendData(DataPoint(graph1PrevX, lastMag), true, 60)
 
-                mGraph2LastXValue += 1.0
-                mSeries2!!.appendData(DataPoint(mGraph2LastXValue, netMag), true, 60)
+                graph2PrevX += 1.0
+                graphSeries2!!.appendData(DataPoint(graph2PrevX, netMag), true, 60)
 
-                peakDetection()
+                detectStep()
 
                 val tvSteps = findViewById<TextView>(R.id.tv_num_steps)
-                tvSteps.text = mStepCounter.toString()
+                tvSteps.text = stepCounterVal.toString()
             }
 
             if (event.sensor.type == Sensor.TYPE_MAGNETIC_FIELD) {
@@ -271,13 +260,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    private fun peakDetection() {
+    private fun detectStep() {
 
-        val highestValX = mSeries2!!.highestValueX
+        val highestValX = graphSeries2!!.highestValueX
         if (highestValX - lastXPoint < windowSize) {
             return
         }
-        val valuesInWindow = mSeries2!!.getValues(lastXPoint, highestValX)
+        val valuesInWindow = graphSeries2!!.getValues(lastXPoint, highestValX)
         lastXPoint = highestValX
         var forwardSlope = 0.0
         var downwardSlope = 0.0
@@ -292,9 +281,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 forwardSlope = dataPointList[i + 1].y - dataPointList[i].y
                 downwardSlope = dataPointList[i].y - dataPointList[i - 1].y
                 if (forwardSlope < 0 && downwardSlope > 0 && dataPointList[i].y > stepThreshold && dataPointList[i].y < noiseThreshold) {
-                    mStepCounter += 1
-                    walkingCoordinatesX.add((500f+30*sin((currAngle-initialAngle)*(Math.PI/180))*mStepCounter).toFloat())
-                    walkingCoordinatesY.add((1000f-30*cos((currAngle-initialAngle)*(Math.PI/180))*mStepCounter).toFloat())
+                    stepCounterVal += 1
+                    walkingCoordinatesX.add((500f+30*sin((currAngle-initialAngle)*(Math.PI/180))*stepCounterVal).toFloat())
+                    walkingCoordinatesY.add((1000f-30*cos((currAngle-initialAngle)*(Math.PI/180))*stepCounterVal).toFloat())
 
                     displacementY += strideLength*cos((currAngle-initialAngle)*(Math.PI/180))
                     displacementX += strideLength*sin((currAngle-initialAngle)*(Math.PI/180))
@@ -340,3 +329,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         println("Accuracy changed")
     }
 }
+
+// References:
+// https://github.com/isibord/StepTrackerAndroid/blob/355df91edd759b674764f5a94c1162105cf663d9/app/src/main/java/edu/uw/daisyi/steptracker/DebugActivity.java#L157
+// https://www.verywellfit.com/set-pedometer-better-accuracy-3432895
