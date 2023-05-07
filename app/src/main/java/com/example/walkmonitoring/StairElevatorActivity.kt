@@ -8,6 +8,7 @@ import android.hardware.SensorManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import android.widget.Toast
 import android.widget.ToggleButton
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
@@ -86,7 +87,7 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
                 val x = event.values[0]
                 val y = event.values[1]
                 val z = event.values[2]
-                tvAccelerometer.text = x.toString()+"\n"+y.toString()+"\n"+z.toString()
+//                tvAccelerometer.text = x.toString()+"\n"+y.toString()+"\n"+z.toString()
 
                 mRawAccelValues = event.values[2].toDouble()
 
@@ -124,14 +125,18 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
                 mGraph2LastXValue += 1.0
                 mSeries2!!.appendData(DataPoint(mGraph2LastXValue, netMag), true, 60)
 
-                if(netMag > 5 && mGraph2LastXValue>20)
-                    tvStair.text = "Climbing"
+                if(netMag > 3 && mGraph2LastXValue>20) {
+                    tvStair.text = "Stairs"
+                    Toast.makeText(applicationContext, "Stairs Detected", Toast.LENGTH_SHORT).show()
+                }
 //                peakDetection()
             }
 
             if(event.sensor.type == Sensor.TYPE_MAGNETIC_FIELD) {
                 val mag = sqrt(event.values[0]*event.values[0] + event.values[1]*event.values[1] + event.values[2]*event.values[2])
-                if(mag < 20) {
+                tvAccelerometer.text = "\n $mag"
+                if(mag < 22) {
+                    Toast.makeText(applicationContext, "Lift Detected", Toast.LENGTH_SHORT).show()
                     tvStair.text = "Lift"
                 }
                 else {
@@ -170,7 +175,7 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
                 forwardSlope = dataPointList[i + 1].y - dataPointList[i].y
                 downwardSlope = dataPointList[i].y - dataPointList[i - 1].y
                 if (forwardSlope < 0 && downwardSlope > 0 && dataPointList[i].y > stepThreshold && dataPointList[i].y < noiseThreshold) {
-                    tvStair.text = "Climbing"
+                    tvStair.text = "Stairs"
                 }
             }
         }
