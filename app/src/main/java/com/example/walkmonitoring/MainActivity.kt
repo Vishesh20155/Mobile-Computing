@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             smoothingWindowSize
         )
     }
-    private var mCurReadIndex = 0
+    private var currentIdx = 0
 
     //peak detection variables
     private var lastXPoint = 1.0
@@ -204,15 +204,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
                 for (i in 0..2) {
                     netAccelMovingVals[i] =
-                        netAccelMovingVals[i] - accPrevVals[i][mCurReadIndex]
-                    accPrevVals[i][mCurReadIndex] = currAccVals[i]
+                        netAccelMovingVals[i] - accPrevVals[i][currentIdx]
+                    accPrevVals[i][currentIdx] = currAccVals[i]
                     netAccelMovingVals[i] =
-                        netAccelMovingVals[i] + accPrevVals[i][mCurReadIndex]
+                        netAccelMovingVals[i] + accPrevVals[i][currentIdx]
                     accAvgVals[i] = netAccelMovingVals[i] / smoothingWindowSize
                 }
-                mCurReadIndex++;
-                if(mCurReadIndex >= smoothingWindowSize){
-                    mCurReadIndex = 0;
+                currentIdx++;
+                if(currentIdx >= smoothingWindowSize){
+                    currentIdx = 0;
                 }
 
                 avgMag = sqrt(

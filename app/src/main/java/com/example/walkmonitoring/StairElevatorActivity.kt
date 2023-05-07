@@ -9,11 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.ToggleButton
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
-import kotlin.math.pow
 import kotlin.math.sqrt
 
 class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
@@ -25,29 +23,23 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var tvAccelerometer: TextView
 
     //    For Graph:
-    private var mSeries1: LineGraphSeries<DataPoint?>? = null
-    private var mSeries2: LineGraphSeries<DataPoint>? = null
+    private var graphSeries1: LineGraphSeries<DataPoint?>? = null
+    private var graphDataPoints2: LineGraphSeries<DataPoint>? = null
 
-    private var mRawAccelValues = 0.0
-    private var mRunningAccelTotal = 0.0
-    private var mCurAccelAvg = 0.0
+    private var accReadings = 0.0
+    private var totalAccValue = 0.0
+    private var accAvg = 0.0
 
-    private var mGraph1LastXValue = 0.0
-    private var mGraph2LastXValue = 0.0
+    private var g1XPrev = 0.0
+    private var g2PrevX = 0.0
 
     private var lastMag: Double = 0.0
     private var avgMag = 0.0
     private var netMag = 0.0
 
     private val smoothingWindowSize = 3
-    private val mAccelValueHistory = FloatArray(smoothingWindowSize)
-    private var mCurReadIndex = 0
-
-    //peak detection variables
-    private var lastXPoint = 1.0
-    var stepThreshold = 2.4
-    var noiseThreshold = 2.0
-    private val windowSize = 10
+    private val accWindowValues = FloatArray(smoothingWindowSize)
+    private var currRunningIdx = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,8 +55,8 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
         sensorManager.registerListener(this, magnetometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
 
         val graph = findViewById<GraphView>(R.id.graph_stairs)
-        mSeries1 = LineGraphSeries()
-        graph.addSeries(mSeries1)
+        graphSeries1 = LineGraphSeries()
+        graph.addSeries(graphSeries1)
         graph.title = "Accelerator Signal"
         graph.gridLabelRenderer.verticalAxisTitle = "Signal Value"
         graph.viewport.isXAxisBoundsManual = true
@@ -72,9 +64,9 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
         graph.viewport.setMaxX(60.0)
 
         val graph2 = findViewById<GraphView>(R.id.graph2_stairs)
-        mSeries2 = LineGraphSeries()
+        graphDataPoints2 = LineGraphSeries()
         graph2.title = "Smoothed Signal"
-        graph2.addSeries(mSeries2)
+        graph2.addSeries(graphDataPoints2)
         graph2.gridLabelRenderer.verticalAxisTitle = "Signal Value"
         graph2.viewport.isXAxisBoundsManual = true
         graph2.viewport.setMinX(0.0)
@@ -89,9 +81,9 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
                 val z = event.values[2]
 //                tvAccelerometer.text = x.toString()+"\n"+y.toString()+"\n"+z.toString()
 
-                mRawAccelValues = event.values[2].toDouble()
+                accReadings = event.values[2].toDouble()
 
-                lastMag = mRawAccelValues.toDouble()
+                lastMag = accReadings.toDouble()
 
 //                for (i in 0..2) {
 //                    mRunningAccelTotal[i] = mRunningAccelTotal[i] - mAccelValueHistory[i][mCurReadIndex]
@@ -99,17 +91,17 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
 //                    mRunningAccelTotal[i] = mRunningAccelTotal[i] + mAccelValueHistory[i][mCurReadIndex]
 //                    mCurAccelAvg[i] = mRunningAccelTotal[i] / smoothingWindowSize
 //                }
-                mRunningAccelTotal = mRunningAccelTotal - mAccelValueHistory[mCurReadIndex]
-                mAccelValueHistory[mCurReadIndex] = mRawAccelValues.toFloat()
-                mRunningAccelTotal = mRunningAccelTotal + mAccelValueHistory[mCurReadIndex]
-                mCurAccelAvg = mRunningAccelTotal / smoothingWindowSize
+                totalAccValue = totalAccValue - accWindowValues[currRunningIdx]
+                accWindowValues[currRunningIdx] = accReadings.toFloat()
+                totalAccValue = totalAccValue + accWindowValues[currRunningIdx]
+                accAvg = totalAccValue / smoothingWindowSize
 
-                mCurReadIndex++;
-                if(mCurReadIndex >= smoothingWindowSize){
-                    mCurReadIndex = 0;
+                currRunningIdx++;
+                if(currRunningIdx >= smoothingWindowSize){
+                    currRunningIdx = 0;
                 }
 
-                avgMag = mCurAccelAvg
+                avgMag = accAvg
 
                 if (lastMag - avgMag > 0.2)
                     netMag = lastMag - avgMag; //removes gravity effect
@@ -119,13 +111,13 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
                 //update graph data points
 
                 //update graph data points
-                mGraph1LastXValue += 1.0
-                mSeries1!!.appendData(DataPoint(mGraph1LastXValue, lastMag), true, 60)
+                g1XPrev += 1.0
+                graphSeries1!!.appendData(DataPoint(g1XPrev, lastMag), true, 60)
 
-                mGraph2LastXValue += 1.0
-                mSeries2!!.appendData(DataPoint(mGraph2LastXValue, netMag), true, 60)
+                g2PrevX += 1.0
+                graphDataPoints2!!.appendData(DataPoint(g2PrevX, netMag), true, 60)
 
-                if(netMag > 3 && mGraph2LastXValue>20) {
+                if(netMag > 3.5 && g2PrevX>20) {
                     tvStair.text = "Stairs"
                     Toast.makeText(applicationContext, "Stairs Detected", Toast.LENGTH_SHORT).show()
                 }
@@ -146,38 +138,6 @@ class StairElevatorActivity : AppCompatActivity(), SensorEventListener {
         }
         else {
             tvAccelerometer.text = "Disabled"
-        }
-    }
-
-    private fun peakDetection() {
-
-        /* Peak detection algorithm derived from: A Step Counter Service for Java-Enabled Devices Using a Built-In Accelerometer, Mladenov et al.
-            *Threshold, stepThreshold was derived by observing people's step graph
-            * ASSUMPTIONS:
-            * Phone is held vertically in portrait orientation for better results
-         */
-        val highestValX = mSeries2!!.highestValueX
-        if (highestValX - lastXPoint < windowSize) {
-            return
-        }
-        val valuesInWindow = mSeries2!!.getValues(lastXPoint, highestValX)
-        lastXPoint = highestValX
-        var forwardSlope = 0.0
-        var downwardSlope = 0.0
-        val dataPointList: MutableList<DataPoint> = ArrayList()
-        valuesInWindow.forEachRemaining { e: DataPoint ->
-            dataPointList.add(
-                e
-            )
-        } //This requires API 24 or higher
-        for (i in dataPointList.indices) {
-            if (i == 0) continue else if (i < dataPointList.size - 1) {
-                forwardSlope = dataPointList[i + 1].y - dataPointList[i].y
-                downwardSlope = dataPointList[i].y - dataPointList[i - 1].y
-                if (forwardSlope < 0 && downwardSlope > 0 && dataPointList[i].y > stepThreshold && dataPointList[i].y < noiseThreshold) {
-                    tvStair.text = "Stairs"
-                }
-            }
         }
     }
 
