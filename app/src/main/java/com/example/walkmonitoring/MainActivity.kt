@@ -273,11 +273,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun peakDetection() {
 
-        /* Peak detection algorithm derived from: A Step Counter Service for Java-Enabled Devices Using a Built-In Accelerometer, Mladenov et al.
-            *Threshold, stepThreshold was derived by observing people's step graph
-            * ASSUMPTIONS:
-            * Phone is held vertically in portrait orientation for better results
-         */
         val highestValX = mSeries2!!.highestValueX
         if (highestValX - lastXPoint < windowSize) {
             return
