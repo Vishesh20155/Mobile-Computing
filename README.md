@@ -26,6 +26,6 @@ Uses [Free Dictionary API](https://dictionaryapi.dev) to show the meaning, synon
 Also implemented voice functionality that asynchronously downloads the audio file and then plays it.
 
 
-[Alarm](https://github.com/Vishesh20155/Mobile-Computing/tree/assignment-2):
+[Alarm](https://github.com/Vishesh20155/Mobile-Computing/tree/assignment-2)
 
 [Odyssey Feedback App](https://github.com/Vishesh20155/Mobile-Computing/tree/assignment-1)
